@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { BasketCanvas } from "@/components/BasketCanvas";
+import { BasketCanvas } from "@/components/basket/BasketCanvas";
 import { generateBasket } from "@/lib/basket";
 import type { BasketConfig } from "@/lib/types";
 import { createPanel } from "@/lib/panel";
