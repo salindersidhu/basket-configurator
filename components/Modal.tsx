@@ -1,4 +1,5 @@
 import { ReactNode, useEffect } from "react";
+import { IoMdClose } from "react-icons/io";
 
 type ModalProps = {
   id?: string;
@@ -17,8 +18,8 @@ export function Modal({
   title,
   subtitle,
 }: ModalProps) {
-  // close on ESC
   useEffect(() => {
+    // close on ESC key
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
@@ -44,19 +45,7 @@ export function Modal({
             onClick={() => onClose()}
             className="modal-close w-7 h-7 rounded-md text-muted hover:text-txt hover:bg-surface cursor-pointer flex items-center justify-center transition-colors"
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <IoMdClose size={20} />
           </button>
         </div>
         {children}
