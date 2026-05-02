@@ -7,6 +7,7 @@ import { generateBasket } from "@/lib/basket";
 import type { BasketConfig } from "@/lib/types";
 import { createPanel } from "@/lib/panel";
 import { exportSTL } from "@/lib/exporters";
+import { VERSION, COMMIT } from "@/lib/version";
 
 const ICON_SUN =
   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
@@ -92,9 +93,6 @@ export function BasketConfiguratorApp() {
       rebuildTimer = setTimeout(rebuild, delay);
     }
 
-    const VERSION = process.env.NEXT_PUBLIC_VERSION;
-    const COMMIT = process.env.NEXT_PUBLIC_COMMIT_HASH;
-
     const year = new Date().getFullYear();
     const aboutModal = createModal(
       "about-modal",
@@ -102,7 +100,18 @@ export function BasketConfiguratorApp() {
 <div class="flex justify-between items-start mb-4">
   <div>
     <h2 class="text-lg font-semibold text-txt">Basket Configurator</h2>
-    <p class="text-[11px] text-dim">v${VERSION} (${COMMIT})</p>
+<p class="text-[11px] text-dim">
+  ${VERSION} (
+  <a
+    href="https://github.com/salindersidhu/basket-configurator/commit/${COMMIT}"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="text-accent hover:text-accent-hover underline transition-colors"
+  >
+    ${COMMIT.slice(0, 7)}
+  </a>
+  )
+</p>
   </div>
   <button class="modal-close w-7 h-7 rounded-md text-muted hover:text-txt hover:bg-surface cursor-pointer flex items-center justify-center transition-colors">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

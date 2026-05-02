@@ -31,7 +31,7 @@ export function Scene({
 
       {/* Model */}
       {geometry && (
-        <Bounds fit clip observe={false} margin={1.2}>
+        <Bounds key={geometry?.uuid} fit clip margin={1.2}>
           <BasketMesh geometry={geometry} color={color} />
         </Bounds>
       )}
