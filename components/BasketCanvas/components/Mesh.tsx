@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export function BasketMesh({
+export function Mesh({
   geometry,
   color,
 }: {

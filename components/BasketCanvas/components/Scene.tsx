@@ -3,8 +3,8 @@ import { Bounds, OrbitControls } from "@react-three/drei";
 
 import { Lights } from "./Lights";
 import { ThemeGrid } from "./ThemeGrid";
-import { BasketMesh } from "./BasketMesh";
-import { COLORS } from "./constants";
+import { Mesh } from "./Mesh";
+import { COLORS } from "../constants";
 
 export function Scene({
   geometry,
@@ -17,26 +17,17 @@ export function Scene({
 }) {
   return (
     <>
-      {/* Background */}
       <color
         attach="background"
         args={[isDark ? COLORS.darkBg : COLORS.lightBg]}
       />
-
-      {/* Lights */}
       <Lights />
-
-      {/* Grid */}
       <ThemeGrid isDark={isDark} />
-
-      {/* Model */}
       {geometry && (
         <Bounds key={geometry?.uuid} fit clip margin={1.2}>
-          <BasketMesh geometry={geometry} color={color} />
+          <Mesh geometry={geometry} color={color} />
         </Bounds>
       )}
-
-      {/* Controls */}
       <OrbitControls
         makeDefault
         enableDamping

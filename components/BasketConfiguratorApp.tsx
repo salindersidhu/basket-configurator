@@ -1,8 +1,15 @@
 "use client";
 
+/**
+ * TODO:
+ *
+ * USE VECTOR IOCN PACKAGE INSTEAD OF INLINE SVG
+ * UPDATE README
+ */
+
 import { useEffect, useRef, useState } from "react";
 
-import { BasketCanvas } from "@/components/basket/BasketCanvas";
+import { BasketCanvas } from "@/components/BasketCanvas";
 import { Modal } from "@/components/Modal";
 
 import { generateBasket } from "@/lib/basket";

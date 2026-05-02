@@ -1,11 +1,5 @@
 import { ReactNode, useEffect } from "react";
 
-/**
- * TODO:
- *
- * ADD TITLE AND SUBTITLE PROPS
- */
-
 type ModalProps = {
   id?: string;
   open: boolean;
@@ -38,7 +32,7 @@ export function Modal({
   return (
     <div id={id} className="modal-overlay" onClick={onClose}>
       <div
-        className="modal-dialog bg-panel border border-border rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4"
+        className="modal-dialog bg-panel border border-border rounded-xl shadow-2xl p-6 max-w-xl w-full mx-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-start mb-4">

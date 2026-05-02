@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import * as THREE from "three";
-import { GRID } from "./constants";
+import { GRID } from "../constants";
 
 export function ThemeGrid({ isDark }: { isDark: boolean }) {
   const grid = useMemo(() => {

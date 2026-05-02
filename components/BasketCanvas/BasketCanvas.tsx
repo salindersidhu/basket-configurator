@@ -3,7 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 
-import { Scene } from "./Scene";
+import { Scene } from "./components/Scene";
 import { CAMERA } from "./constants";
 
 export function BasketCanvas({
