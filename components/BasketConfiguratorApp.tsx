@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 import { BasketCanvas } from "@/components/basket/BasketCanvas";
+import { Modal } from "@/components/Modal";
+
 import { generateBasket } from "@/lib/basket";
 import type { BasketConfig } from "@/lib/types";
 import { createPanel } from "@/lib/panel";
@@ -15,21 +17,6 @@ const ICON_MOON =
   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 const ICON_INFO =
   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
-
-function createModal(id: string, content: string): HTMLElement {
-  const overlay = document.createElement("div");
-  overlay.className = "modal-overlay hidden";
-  overlay.id = id;
-  overlay.innerHTML = `<div class="modal-dialog bg-panel border border-border rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4">${content}</div>`;
-  document.body.appendChild(overlay);
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) overlay.classList.add("hidden");
-  });
-  overlay
-    .querySelector(".modal-close")
-    ?.addEventListener("click", () => overlay.classList.add("hidden"));
-  return overlay;
-}
 
 const initialConfig = (): BasketConfig => ({
   width: 120,
@@ -51,6 +38,7 @@ const initialConfig = (): BasketConfig => ({
 export function BasketConfiguratorApp() {
   const panelRef = useRef<HTMLElement>(null);
   const geometryRef = useRef<ReturnType<typeof generateBasket> | null>(null);
+  const exportInputRef = useRef<HTMLInputElement>(null);
 
   const [geometry, setGeometry] = useState<ReturnType<
     typeof generateBasket
@@ -58,6 +46,8 @@ export function BasketConfiguratorApp() {
   const [modelColor, setModelColor] = useState("#b8b8b8");
   const [isDark, setIsDark] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   useEffect(() => {
     const panelEl = panelRef.current;
@@ -93,92 +83,6 @@ export function BasketConfiguratorApp() {
       rebuildTimer = setTimeout(rebuild, delay);
     }
 
-    const year = new Date().getFullYear();
-    const aboutModal = createModal(
-      "about-modal",
-      `
-<div class="flex justify-between items-start mb-4">
-  <div>
-    <h2 class="text-lg font-semibold text-txt">Basket Configurator</h2>
-<p class="text-[11px] text-dim">
-  ${VERSION} (
-  <a
-    href="https://github.com/salindersidhu/basket-configurator/commit/${COMMIT}"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="text-accent hover:text-accent-hover underline transition-colors"
-  >
-    ${COMMIT.slice(0, 7)}
-  </a>
-  )
-</p>
-  </div>
-  <button class="modal-close w-7 h-7 rounded-md text-muted hover:text-txt hover:bg-surface cursor-pointer flex items-center justify-center transition-colors">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"/>
-      <line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  </button>
-</div>
-  <p class="text-sm text-muted leading-relaxed mb-3">
-    A browser-based 3D configurator for designing printable baskets. Adjust dimensions,
-    wall patterns, handles, corner rounding, and color, then export as STL for your slicer.
-  </p>
-  <p class="text-sm text-muted leading-relaxed mb-4">
-    Geometry is generated using CSG boolean operations for accurate, manifold meshes
-    suitable for 3D printing.
-  </p>
-  <p class="text-[11px] text-dim">&copy; ${year} <a href="https://github.com/salindersidhu" target="_blank" rel="noopener noreferrer" class="text-accent hover:text-accent-hover underline transition-colors">Salinder Sidhu</a></p>
-`,
-    );
-
-    const exportModal = createModal(
-      "export-modal",
-      `
-  <div class="flex justify-between items-start mb-4">
-    <h2 class="text-lg font-semibold text-txt">Export STL</h2>
-    <button class="modal-close w-7 h-7 rounded-md text-muted hover:text-txt hover:bg-surface cursor-pointer flex items-center justify-center transition-colors">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div class="mb-4">
-    <label class="text-xs text-muted block mb-1.5">Filename</label>
-    <div class="flex items-center gap-0">
-      <input type="text" id="export-filename" value="basket"
-        class="flex-1 bg-input border border-input-border rounded-l-md px-3 py-2 text-sm text-txt outline-none focus:border-accent transition-colors" />
-      <span class="bg-surface border border-l-0 border-input-border rounded-r-md px-3 py-2 text-sm text-dim">.stl</span>
-    </div>
-  </div>
-  <div class="flex gap-2">
-    <button class="modal-close flex-1 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all border border-border text-muted hover:text-txt hover:border-muted">
-      Cancel
-    </button>
-    <button id="export-confirm" class="flex-1 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all bg-accent text-white hover:bg-accent-hover active:scale-[0.98]">
-      Download
-    </button>
-  </div>
-`,
-    );
-
-    const exportConfirm = exportModal.querySelector("#export-confirm");
-    exportConfirm?.addEventListener("click", () => {
-      const g = geometryRef.current;
-      if (!g) return;
-      const nameInput =
-        exportModal.querySelector<HTMLInputElement>("#export-filename");
-      const filename = `${nameInput?.value.trim() || "basket"}.stl`;
-      exportSTL(g, filename);
-      exportModal.classList.add("hidden");
-    });
-
-    const exportFilename =
-      exportModal.querySelector<HTMLInputElement>("#export-filename");
-    exportFilename?.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        exportConfirm?.dispatchEvent(new MouseEvent("click"));
-      }
-    });
-
     createPanel(
       panelEl,
       config,
@@ -186,20 +90,9 @@ export function BasketConfiguratorApp() {
       (hex) => setModelColor(hex),
     );
 
-    function showExportDialog(): void {
-      const nameInput =
-        exportModal.querySelector<HTMLInputElement>("#export-filename");
-      if (nameInput) nameInput.value = "basket";
-      exportModal.classList.remove("hidden");
-      setTimeout(() => {
-        nameInput?.select();
-        nameInput?.focus();
-      }, 50);
-    }
-
     panelEl.addEventListener("click", (e) => {
       const btn = (e.target as HTMLElement).closest('[data-export="stl"]');
-      if (btn) showExportDialog();
+      if (btn) setExportOpen(true);
     });
 
     rebuild();
@@ -208,8 +101,6 @@ export function BasketConfiguratorApp() {
       if (rebuildTimer) clearTimeout(rebuildTimer);
       geometryRef.current?.dispose();
       geometryRef.current = null;
-      aboutModal.remove();
-      exportModal.remove();
       panelEl.replaceChildren();
     };
   }, []);
@@ -220,6 +111,15 @@ export function BasketConfiguratorApp() {
       document.body.classList.toggle("light", !next);
       return next;
     });
+  };
+
+  const handleExport = () => {
+    const g = geometryRef.current;
+    if (!g) return;
+
+    const filename = `${exportInputRef.current?.value.trim() || "basket"}.stl`;
+    exportSTL(g, filename);
+    setExportOpen(false);
   };
 
   return (
@@ -241,8 +141,9 @@ export function BasketConfiguratorApp() {
           />
         </div>
         <div
-          className={`pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 rounded-md bg-surface/80 px-3 py-1.5 text-xs text-muted ${busy ? "" : "hidden"}`}
-          aria-live="polite"
+          className={`pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 rounded-md bg-surface/80 px-3 py-1.5 text-xs text-muted ${
+            busy ? "" : "hidden"
+          }`}
         >
           Generating...
         </div>
@@ -259,14 +160,91 @@ export function BasketConfiguratorApp() {
             title="About"
             className="toolbar-btn flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface/80 text-txt transition-colors hover:bg-surface-hover"
             dangerouslySetInnerHTML={{ __html: ICON_INFO }}
-            onClick={() =>
-              document.getElementById("about-modal")?.classList.remove("hidden")
-            }
+            onClick={() => setAboutOpen(true)}
           />
         </div>
         <div className="pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 text-[11px] text-dim opacity-50">
           Drag to rotate · Scroll to zoom · Right-click to pan
         </div>
+        <Modal
+          open={aboutOpen}
+          onClose={() => setAboutOpen(false)}
+          id="about-modal"
+          title="Basket Configurator"
+          subtitle={
+            <>
+              Build {VERSION} (
+              <a
+                href={`https://github.com/salindersidhu/basket-configurator/commit/${COMMIT}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent hover:text-accent-hover underline"
+              >
+                {COMMIT.slice(0, 7)}
+              </a>
+              )
+            </>
+          }
+        >
+          <p className="text-sm text-muted leading-relaxed mb-3">
+            A browser-based 3D configurator for designing printable baskets.
+            Adjust dimensions, wall patterns, handles, corner rounding, and
+            color, then export as STL.
+          </p>
+          <p className="text-sm text-muted leading-relaxed mb-4">
+            Geometry is generated using CSG boolean operations for accurate
+            manifold meshes.
+          </p>
+          <p className="text-xs text-dim">
+            &copy; {new Date().getFullYear()}{" "}
+            <a
+              href="https://github.com/salindersidhu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent-hover underline"
+            >
+              Salinder Sidhu
+            </a>
+          </p>
+        </Modal>
+        <Modal
+          open={exportOpen}
+          onClose={() => setExportOpen(false)}
+          id="export-modal"
+          title="Export STL"
+        >
+          <div className="mb-4">
+            <label className="text-xs text-muted block mb-1.5">Filename</label>
+
+            <div className="flex">
+              <input
+                ref={exportInputRef}
+                defaultValue="basket"
+                className="flex-1 bg-input border border-input-border rounded-l-md px-3 py-2 text-sm text-txt"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleExport();
+                }}
+              />
+              <span className="bg-surface border border-l-0 border-input-border rounded-r-md px-3 py-2 text-sm text-dim">
+                .stl
+              </span>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setExportOpen(false)}
+              className="flex-1 py-2 rounded-lg text-sm border border-border text-muted cursor-pointer hover:bg-surface-hover transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleExport}
+              className="flex-1 py-2 rounded-lg text-sm bg-accent text-white cursor-pointer hover:bg-accent-hover transition-colors"
+            >
+              Download
+            </button>
+          </div>
+        </Modal>
       </main>
     </div>
   );
