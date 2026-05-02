@@ -218,7 +218,6 @@ input[type="color"]::-moz-color-swatch {
 }
 
 .section-body {
-  overflow: hidden;
   max-height: 800px;
   opacity: 1;
   margin-top: 12px;

@@ -5,16 +5,16 @@ import { toMM, toDisplay } from "@/lib/utils";
 interface Props {
   id: keyof typeof SLIDER_DEFS;
   value: number;
-  isFreedom: boolean;
+  isImperial: boolean;
   onChange: (val: number) => void;
 }
 
-export function SliderControl({ id, value, isFreedom, onChange }: Props) {
+export function SliderControl({ id, value, isImperial, onChange }: Props) {
   const def = SLIDER_DEFS[id];
-  const unit = isFreedom ? "in" : "mm";
-  const range = isFreedom ? def.in : def.mm;
+  const unit = isImperial ? "in" : "mm";
+  const range = isImperial ? def.in : def.mm;
 
-  const displayValue = toDisplay(value, isFreedom);
+  const displayValue = toDisplay(value, isImperial);
 
   return (
     <div className="mb-3 last:mb-0">
@@ -28,7 +28,7 @@ export function SliderControl({ id, value, isFreedom, onChange }: Props) {
             max={range.max}
             step={range.step}
             onChange={(e) =>
-              onChange(toMM(parseFloat(e.target.value), isFreedom))
+              onChange(toMM(parseFloat(e.target.value), isImperial))
             }
             className="w-16 bg-input border border-input-border rounded px-2 py-0.5 text-xs text-txt text-right outline-none focus:border-accent transition-colors"
           />
@@ -41,7 +41,7 @@ export function SliderControl({ id, value, isFreedom, onChange }: Props) {
         max={range.max}
         step={range.step}
         value={displayValue}
-        onChange={(e) => onChange(toMM(parseFloat(e.target.value), isFreedom))}
+        onChange={(e) => onChange(toMM(parseFloat(e.target.value), isImperial))}
         className="w-full"
       />
     </div>

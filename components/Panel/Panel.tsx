@@ -6,9 +6,10 @@ import type { BasketConfig } from "@/lib/types";
 
 import { PRESETS } from "./constants";
 
-import { SliderControl } from "./components/SliderControl";
-import { SegmentedControl } from "./components/SegmentedControl";
 import { ColorPicker } from "./components/ColorPicker";
+import { PanelSection } from "./components/PanelSection";
+import { SegmentedControl } from "./components/SegmentedControl";
+import { SliderControl } from "./components/SliderControl";
 
 interface Props {
   config: BasketConfig;
@@ -18,7 +19,7 @@ interface Props {
 }
 
 export function Panel({ config, onChange, onColorChange, onExport }: Props) {
-  const [isFreedom, setIsFreedom] = useState(false);
+  const [isImperial, setIsImperial] = useState(false);
 
   function update<K extends keyof BasketConfig>(
     key: K,
@@ -44,12 +45,7 @@ export function Panel({ config, onChange, onColorChange, onExport }: Props) {
       </div>
 
       <div className="flex-1 overflow-y-auto px-5 py-4 sections-container">
-        <div className="panel-section">
-          <div className="section-header flex items-center gap-2 cursor-pointer select-none mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-dim flex-1">
-              Presets
-            </span>
-          </div>
+        <PanelSection title="Presets">
           <div className="flex flex-wrap gap-1.5">
             {PRESETS.map((preset) => (
               <button
@@ -84,76 +80,58 @@ export function Panel({ config, onChange, onColorChange, onExport }: Props) {
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="panel-section">
-          <div className="section-header flex items-center gap-2 cursor-pointer select-none mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-dim flex-1">
-              Units
-            </span>
-          </div>
+        </PanelSection>
+        <PanelSection title="Colour">
+          <ColorPicker
+            color={config.color || "#b8b8b8"}
+            onChange={(hex) => update("color", hex)}
+          />
+        </PanelSection>
+        <PanelSection title="Units">
           <SegmentedControl
-            value={isFreedom ? "freedom" : "metric"}
+            value={isImperial ? "imperial" : "metric"}
             options={[
               { value: "metric", label: "Metric (mm)" },
-              { value: "freedom", label: "Freedom (in)" },
+              { value: "imperial", label: "Freedom (in)" },
             ]}
-            onChange={(val) => setIsFreedom(val === "freedom")}
+            onChange={(val) => setIsImperial(val === "imperial")}
           />
-        </div>
-
-        <div className="panel-section">
-          <div className="section-header flex items-center gap-2 cursor-pointer select-none mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-dim flex-1">
-              Shape
-            </span>
-          </div>
+        </PanelSection>
+        <PanelSection title="Shape">
           <SliderControl
             id="width"
             value={config.width}
-            isFreedom={isFreedom}
+            isImperial={isImperial}
             onChange={(v) => update("width", v)}
           />
           <SliderControl
             id="height"
             value={config.height}
-            isFreedom={isFreedom}
+            isImperial={isImperial}
             onChange={(v) => update("height", v)}
           />
           <SliderControl
             id="length"
             value={config.length}
-            isFreedom={isFreedom}
+            isImperial={isImperial}
             onChange={(v) => update("length", v)}
           />
           <SliderControl
             id="cornerRadius"
             value={config.cornerRadius}
-            isFreedom={isFreedom}
+            isImperial={isImperial}
             onChange={(v) => update("cornerRadius", v)}
           />
-        </div>
-
-        <div className="panel-section">
-          <div className="section-header flex items-center gap-2 cursor-pointer select-none mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-dim flex-1">
-              Structure
-            </span>
-          </div>
+        </PanelSection>
+        <PanelSection title="Structure">
           <SliderControl
             id="wallThickness"
             value={config.wallThickness}
-            isFreedom={isFreedom}
+            isImperial={isImperial}
             onChange={(v) => update("wallThickness", v)}
           />
-        </div>
-
-        <div className="panel-section">
-          <div className="section-header flex items-center gap-2 cursor-pointer select-none mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-dim flex-1">
-              Wall Pattern
-            </span>
-          </div>
+        </PanelSection>
+        <PanelSection title="Wall Pattern">
           <SegmentedControl
             value={config.pattern}
             options={[
@@ -168,25 +146,19 @@ export function Panel({ config, onChange, onColorChange, onExport }: Props) {
               <SliderControl
                 id="patternSize"
                 value={config.patternSize}
-                isFreedom={isFreedom}
+                isImperial={isImperial}
                 onChange={(v) => update("patternSize", v)}
               />
               <SliderControl
                 id="patternSpacing"
                 value={config.patternSpacing}
-                isFreedom={isFreedom}
+                isImperial={isImperial}
                 onChange={(v) => update("patternSpacing", v)}
               />
             </>
           )}
-        </div>
-
-        <div className="panel-section">
-          <div className="section-header flex items-center gap-2 cursor-pointer select-none mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-dim flex-1">
-              Handles
-            </span>
-          </div>
+        </PanelSection>
+        <PanelSection title="Handles">
           <label className="flex items-center gap-2 cursor-pointer group">
             <input
               type="checkbox"
@@ -216,38 +188,25 @@ export function Panel({ config, onChange, onColorChange, onExport }: Props) {
               <SliderControl
                 id="handleWidth"
                 value={config.handleWidth}
-                isFreedom={isFreedom}
+                isImperial={isImperial}
                 onChange={(v) => update("handleWidth", v)}
               />
               <SliderControl
                 id="handleHeight"
                 value={config.handleHeight}
-                isFreedom={isFreedom}
+                isImperial={isImperial}
                 onChange={(v) => update("handleHeight", v)}
               />
               <SliderControl
                 id="handleTopOffset"
                 value={config.handleTopOffset}
-                isFreedom={isFreedom}
+                isImperial={isImperial}
                 onChange={(v) => update("handleTopOffset", v)}
               />
             </div>
           )}
-        </div>
-
-        <div className="panel-section">
-          <div className="section-header flex items-center gap-2 cursor-pointer select-none mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-dim flex-1">
-              Colour
-            </span>
-          </div>
-          <ColorPicker
-            color={config.color || "#b8b8b8"}
-            onChange={(hex) => update("color", hex)}
-          />
-        </div>
+        </PanelSection>
       </div>
-
       <div className="px-5 py-4 border-t border-border">
         <button
           onClick={onExport}
