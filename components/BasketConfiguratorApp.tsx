@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { FiInfo, FiMoon, FiSun } from "react-icons/fi";
 
 import { BasketCanvas } from "@/components/BasketCanvas";
+import { Panel } from "@/components/Panel";
 import { Modal } from "@/components/Modal";
 
 import { generateBasket } from "@/lib/basket";
 import type { BasketConfig } from "@/lib/types";
-import { createPanel } from "@/lib/panel";
 import { exportSTL } from "@/lib/exporters";
 import { VERSION, COMMIT } from "@/lib/version";
 
@@ -30,7 +30,6 @@ const initialConfig = (): BasketConfig => ({
 });
 
 export function BasketConfiguratorApp() {
-  const panelRef = useRef<HTMLElement>(null);
   const geometryRef = useRef<ReturnType<typeof generateBasket> | null>(null);
   const exportInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,62 +41,55 @@ export function BasketConfiguratorApp() {
   const [busy, setBusy] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [config, setConfig] = useState<BasketConfig>(initialConfig());
 
   useEffect(() => {
-    const panelEl = panelRef.current;
-    if (!panelEl) return;
+    let cancelled = false;
 
-    const config = initialConfig();
-    let rebuildTimer: ReturnType<typeof setTimeout> | null = null;
+    const isComplex =
+      config.pattern !== "none" || config.handles || config.cornerRadius > 1;
 
-    function rebuild(): void {
-      setBusy(true);
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          try {
-            const geo = generateBasket(config);
-            setGeometry((prev) => {
-              prev?.dispose();
-              geometryRef.current = geo;
-              return geo;
-            });
-          } catch (e) {
-            console.error("Basket generation failed:", e);
-          }
-          setBusy(false);
-        }, 10);
-      });
-    }
+    const delay = isComplex ? 250 : 30;
 
-    function debouncedRebuild(): void {
-      if (rebuildTimer) clearTimeout(rebuildTimer);
-      const isComplex =
-        config.pattern !== "none" || config.handles || config.cornerRadius > 1;
-      const delay = isComplex ? 250 : 30;
-      rebuildTimer = setTimeout(rebuild, delay);
-    }
+    setBusy(true);
 
-    createPanel(
-      panelEl,
-      config,
-      () => debouncedRebuild(),
-      (hex) => setModelColor(hex),
-    );
+    const timeout = setTimeout(() => {
+      try {
+        const geo = generateBasket(config);
 
-    panelEl.addEventListener("click", (e) => {
-      const btn = (e.target as HTMLElement).closest('[data-export="stl"]');
-      if (btn) setExportOpen(true);
-    });
+        if (cancelled) return;
 
-    rebuild();
+        setGeometry((prev) => {
+          prev?.dispose();
+          geometryRef.current = geo;
+          return geo;
+        });
+
+        setBusy(false);
+      } catch (e) {
+        setBusy(false);
+      }
+    }, delay);
 
     return () => {
-      if (rebuildTimer) clearTimeout(rebuildTimer);
-      geometryRef.current?.dispose();
-      geometryRef.current = null;
-      panelEl.replaceChildren();
+      cancelled = true;
+      clearTimeout(timeout);
     };
-  }, []);
+  }, [
+    config.width,
+    config.height,
+    config.length,
+    config.wallThickness,
+    config.cornerRadius,
+    config.pattern,
+    config.patternSize,
+    config.patternSpacing,
+    config.handles,
+    config.handleSides,
+    config.handleWidth,
+    config.handleHeight,
+    config.handleTopOffset,
+  ]);
 
   const toggleTheme = (): void => {
     setIsDark((d) => {
@@ -118,11 +110,14 @@ export function BasketConfiguratorApp() {
 
   return (
     <div className="flex h-full min-h-0">
-      <aside
-        ref={panelRef}
-        id="panel"
-        className="panel-width bg-panel border-r border-border overflow-y-auto flex flex-col shrink-0"
-      />
+      <aside className="panel-width bg-panel border-r border-border overflow-y-auto flex flex-col shrink-0">
+        <Panel
+          config={config}
+          onChange={setConfig}
+          onColorChange={setModelColor}
+          onExport={() => setExportOpen(true)}
+        />
+      </aside>
       <main
         id="viewer"
         className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-bg"
@@ -188,8 +183,8 @@ export function BasketConfiguratorApp() {
             color, then export as STL.
           </p>
           <p className="text-sm text-muted leading-relaxed mb-4">
-            Geometry is generated using CSG boolean operations for accurate
-            manifold meshes.
+            Geometry is generated using CSG boolean operations to ensure clean,
+            manifold meshes suitable for 3D printing.
           </p>
           <p className="text-xs text-dim">
             &copy; {new Date().getFullYear()}{" "}
