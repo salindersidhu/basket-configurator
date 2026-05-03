@@ -10,6 +10,8 @@ A 3D basket configurator for 3D printing. Design a custom basket with configurab
 
 ## Features
 
+<img alt="Screenshot" src="https://github.com/user-attachments/assets/88335a8f-cb5c-492d-a04a-22e00c7de651" />
+
 - **Dimensions**: Adjustable width, height, and length
 - **Wall thickness**: Fine-tune for your printer
 - **Wall patterns**: Solid, circular holes, or hexagonal patterns
