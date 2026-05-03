@@ -162,6 +162,7 @@ export function BasketConfiguratorApp() {
           onClose={() => setAboutOpen(false)}
           id="about-modal"
           title="Basket Configurator"
+          icon={<img src="/icon0.svg" />}
           subtitle={
             <>
               Build {VERSION} (

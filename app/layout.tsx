@@ -5,7 +5,20 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Basket Configurator",
   description:
-    "Design printable baskets in the browser—dimensions, patterns, handles—and export STL for your slicer.",
+    "Design printable baskets in your browser. Customize dimensions, wall patterns, handles, and export ready-to-print STL files.",
+  keywords: [
+    "3D printing",
+    "basket generator",
+    "STL generator",
+    "parametric design",
+    "CAD web app",
+    "basket configurator",
+  ],
+  authors: [{ name: "Salinder Sidhu" }],
+  creator: "Salinder Sidhu",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

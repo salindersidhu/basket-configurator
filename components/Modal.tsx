@@ -6,8 +6,9 @@ type ModalProps = {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
-  title?: string;
+  title?: string | ReactNode;
   subtitle?: string | ReactNode;
+  icon?: ReactNode;
 };
 
 export function Modal({
@@ -17,9 +18,9 @@ export function Modal({
   children,
   title,
   subtitle,
+  icon,
 }: ModalProps) {
   useEffect(() => {
-    // close on ESC key
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
@@ -37,12 +38,19 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-start mb-4">
-          <div>
-            <h2 className="text-lg font-semibold text-txt">{title}</h2>
-            {subtitle && <p className="text-xs text-dim">{subtitle}</p>}
+          <div className="flex items-center gap-3">
+            {icon && <div className="h-8 w-8">{icon}</div>}
+            <div>
+              {title && (
+                <h2 className="text-lg font-semibold text-txt">{title}</h2>
+              )}
+              {subtitle && (
+                <p className="text-xs text-dim mt-0.5">{subtitle}</p>
+              )}
+            </div>
           </div>
           <button
-            onClick={() => onClose()}
+            onClick={onClose}
             className="modal-close w-7 h-7 rounded-md text-muted hover:text-txt hover:bg-surface cursor-pointer flex items-center justify-center transition-colors"
           >
             <IoMdClose size={20} />
