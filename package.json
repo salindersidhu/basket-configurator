@@ -4,6 +4,7 @@
   "description": "3D basket configurator with STL/3MF export for 3D printing",
   "private": true,
   "scripts": {
+    "clean": "rm -rf .next",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

@@ -42,10 +42,50 @@ npm i
 npm run dev
 ```
 
+## Cleaning
+
+If you run into caching or build issues, you can clear the Next.js build artifacts:
+
+```bash
+npm run clean
+```
+
 2. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Production Build
 
 1. Create and merge a Pull Request into the main branch.
 
+2. The production site is automatically deployed to [https://basket-configurator.vercel.app/](https://basket-configurator.vercel.app/).
+
+## Contributing
+
+Please see our [Contributing Guide](/CONTRIBUTING.md) for more info.
+
 ## Project Structure
+
+      .
+      ├── app                               #
+      │   ├── favicon.ico                   # App favicon
+      │   ├── global.css                    # Global styles
+      │   ├── layout.tsx                    # Root layout
+      │   ├── manifest.json                 # Web app manifest
+      │   ├── page.tsx                      # Main entry page
+      │   └── ...
+      ├── public                            # Static assets
+      │   └── ...
+      ├── components                        # Reusable UI + feature components
+      │   ├── ...
+      │   ├── BasketConfigurator            #
+      │   │   ├── index.ts                  # Entry point
+      │   │   ├── BasketConfigurator.tsx    # Main UI + layout
+      │   │   └── ...                       # Feature-specific subcomponents
+      │   └── ...
+      ├── hooks/                            # Custom React hooks
+      │   └── ...
+      ├── lib/                              # Core logic, non-UI code
+      │   └── ...
+      ├── next.config.ts                    # Next.js configuration
+      ├── postcss.config.mjs                # PostCSS / Tailwind config
+      ├── package.json
+      └── ...
