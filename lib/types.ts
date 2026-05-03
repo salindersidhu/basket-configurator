@@ -2,18 +2,6 @@ export type PatternType = "none" | "holes" | "hexagons";
 
 export type HandleSides = "front-back" | "left-right" | "all";
 
-export type SliderKey =
-  | "width"
-  | "height"
-  | "length"
-  | "cornerRadius"
-  | "wallThickness"
-  | "patternSize"
-  | "patternSpacing"
-  | "handleWidth"
-  | "handleHeight"
-  | "handleTopOffset";
-
 export interface BasketConfig {
   width: number;
   height: number;

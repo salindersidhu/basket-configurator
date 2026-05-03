@@ -41,19 +41,28 @@ export function HandleSection({ config, isImperial, update }: Props) {
             />
           </div>
           <SliderControl
-            id="handleWidth"
+            min={20}
+            max={200}
+            step={1}
+            label="Width"
             value={config.handleWidth}
             isImperial={isImperial}
             onChange={(v) => update("handleWidth", v)}
           />
           <SliderControl
-            id="handleHeight"
+            min={10}
+            max={60}
+            step={1}
+            label="Height"
             value={config.handleHeight}
             isImperial={isImperial}
             onChange={(v) => update("handleHeight", v)}
           />
           <SliderControl
-            id="handleTopOffset"
+            min={5}
+            max={60}
+            step={1}
+            label="Top Offset"
             value={config.handleTopOffset}
             isImperial={isImperial}
             onChange={(v) => update("handleTopOffset", v)}

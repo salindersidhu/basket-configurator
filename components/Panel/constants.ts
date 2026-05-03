@@ -1,4 +1,4 @@
-import { SliderKey, Preset, HandleSides } from "@/lib/types";
+import { Preset, HandleSides } from "@/lib/types";
 
 export const PRESETS: Preset[] = [
   {
@@ -168,66 +168,6 @@ export const PRESETS: Preset[] = [
     handles: false,
   },
 ];
-
-export const SLIDER_DEFS: Record<
-  SliderKey,
-  {
-    label: string;
-    mm: { min: number; max: number; step: number };
-    in: { min: number; max: number; step: number };
-  }
-> = {
-  width: {
-    label: "Width",
-    mm: { min: 40, max: 300, step: 1 },
-    in: { min: 1.5, max: 12, step: 0.1 },
-  },
-  height: {
-    label: "Height",
-    mm: { min: 20, max: 200, step: 1 },
-    in: { min: 0.8, max: 8, step: 0.1 },
-  },
-  length: {
-    label: "Length",
-    mm: { min: 40, max: 300, step: 1 },
-    in: { min: 1.5, max: 12, step: 0.1 },
-  },
-  cornerRadius: {
-    label: "Corner Radius",
-    mm: { min: 0, max: 60, step: 1 },
-    in: { min: 0, max: 2.4, step: 0.05 },
-  },
-  wallThickness: {
-    label: "Wall Thickness",
-    mm: { min: 1, max: 8, step: 0.5 },
-    in: { min: 0.04, max: 0.31, step: 0.01 },
-  },
-  patternSize: {
-    label: "Size",
-    mm: { min: 3, max: 20, step: 0.5 },
-    in: { min: 0.12, max: 0.8, step: 0.02 },
-  },
-  patternSpacing: {
-    label: "Spacing",
-    mm: { min: 1, max: 10, step: 0.5 },
-    in: { min: 0.04, max: 0.4, step: 0.02 },
-  },
-  handleWidth: {
-    label: "Width",
-    mm: { min: 20, max: 200, step: 1 },
-    in: { min: 0.8, max: 8, step: 0.1 },
-  },
-  handleHeight: {
-    label: "Height",
-    mm: { min: 10, max: 60, step: 1 },
-    in: { min: 0.4, max: 2.4, step: 0.1 },
-  },
-  handleTopOffset: {
-    label: "Top Offset",
-    mm: { min: 5, max: 60, step: 1 },
-    in: { min: 0.2, max: 2.4, step: 0.1 },
-  },
-};
 
 export const HANDLE_SIDE_OPTIONS: { value: HandleSides; label: string }[] = [
   { value: "front-back", label: "Front & Back" },

@@ -16,7 +16,10 @@ export function StructureSection({ config, isImperial, update }: Props) {
   return (
     <PanelSection title="Structure">
       <SliderControl
-        id="wallThickness"
+        min={1}
+        max={8}
+        step={0.5}
+        label="Wall Thickness"
         value={config.wallThickness}
         isImperial={isImperial}
         onChange={(v) => update("wallThickness", v)}
