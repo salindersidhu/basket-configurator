@@ -1,6 +1,6 @@
 {
   "name": "basket-configurator",
-  "version": "0.0.1",
+  "version": "0.5.0",
   "description": "3D basket configurator with STL/3MF export for 3D printing",
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-epic-spinners": "^0.6.0",
     "react-icons": "^5.6.0",
     "three": "^0.184.0",
     "three-bvh-csg": "^0.0.18"

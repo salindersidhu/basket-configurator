@@ -28,7 +28,7 @@ export interface BasketConfig {
   handleWidth: number;
   handleHeight: number;
   handleTopOffset: number;
-  color: string;
+  color?: string;
 }
 
 export interface Preset extends Partial<BasketConfig> {

@@ -1,5 +1,5 @@
-import { BasketConfiguratorApp } from '@/components/BasketConfiguratorApp';
+import { BasketConfigurator } from "@/components/BasketConfigurator";
 
 export default function HomePage() {
-  return <BasketConfiguratorApp />;
+  return <BasketConfigurator />;
 }
