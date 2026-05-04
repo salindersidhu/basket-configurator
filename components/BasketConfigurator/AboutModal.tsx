@@ -53,7 +53,7 @@ export function AboutModal({ open, onClose }: Props) {
     >
       <p className="text-sm text-muted leading-relaxed mb-3">
         A browser-based 3D configurator for designing printable baskets. Adjust
-        dimensions, wall patterns, handles, corner rounding, and color, then
+        dimensions, wall patterns, handles, corner rounding, and colour, then
         export as STL.
       </p>
       <p className="text-sm text-muted leading-relaxed mb-4">

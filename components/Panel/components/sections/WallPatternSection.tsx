@@ -28,13 +28,19 @@ export function WallPatternSection({ config, isImperial, update }: Props) {
       {config.pattern !== "none" && (
         <>
           <SliderControl
-            id="patternSize"
+            min={3}
+            max={20}
+            step={0.5}
+            label="Size"
             value={config.patternSize}
             isImperial={isImperial}
             onChange={(v) => update("patternSize", v)}
           />
           <SliderControl
-            id="patternSpacing"
+            min={1}
+            max={10}
+            step={0.5}
+            label="Spacing"
             value={config.patternSpacing}
             isImperial={isImperial}
             onChange={(v) => update("patternSpacing", v)}

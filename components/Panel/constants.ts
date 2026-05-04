@@ -1,4 +1,4 @@
-import { SliderKey, Preset, HandleSides } from "@/lib/types";
+import { Preset, HandleSides } from "@/lib/types";
 
 export const PRESETS: Preset[] = [
   {
@@ -119,67 +119,55 @@ export const PRESETS: Preset[] = [
     patternSpacing: 3,
     handles: false,
   },
-];
-
-export const SLIDER_DEFS: Record<
-  SliderKey,
   {
-    label: string;
-    mm: { min: number; max: number; step: number };
-    in: { min: number; max: number; step: number };
-  }
-> = {
-  width: {
-    label: "Width",
-    mm: { min: 40, max: 300, step: 1 },
-    in: { min: 1.5, max: 12, step: 0.1 },
+    name: "Drawer Insert",
+    width: 160,
+    height: 40,
+    length: 220,
+    wallThickness: 2,
+    cornerRadius: 4,
+    pattern: "none",
+    handles: false,
   },
-  height: {
-    label: "Height",
-    mm: { min: 20, max: 200, step: 1 },
-    in: { min: 0.8, max: 8, step: 0.1 },
+  {
+    name: "Kitchen Drying Basket",
+    width: 180,
+    height: 70,
+    length: 240,
+    wallThickness: 2,
+    cornerRadius: 12,
+    pattern: "holes",
+    patternSize: 6,
+    patternSpacing: 3,
+    handles: true,
+    handleSides: "front-back",
+    handleWidth: 70,
+    handleHeight: 20,
+    handleTopOffset: 10,
   },
-  length: {
-    label: "Length",
-    mm: { min: 40, max: 300, step: 1 },
-    in: { min: 1.5, max: 12, step: 0.1 },
+  {
+    name: "Tall Storage Tube",
+    width: 80,
+    height: 200,
+    length: 80,
+    wallThickness: 2.5,
+    cornerRadius: 20,
+    pattern: "none",
+    handles: false,
   },
-  cornerRadius: {
-    label: "Corner Radius",
-    mm: { min: 0, max: 60, step: 1 },
-    in: { min: 0, max: 2.4, step: 0.05 },
+  {
+    name: "Grid Organizer Bin",
+    width: 180,
+    height: 100,
+    length: 180,
+    wallThickness: 2.5,
+    cornerRadius: 6,
+    pattern: "hexagons",
+    patternSize: 8,
+    patternSpacing: 3,
+    handles: false,
   },
-  wallThickness: {
-    label: "Wall Thickness",
-    mm: { min: 1, max: 8, step: 0.5 },
-    in: { min: 0.04, max: 0.31, step: 0.01 },
-  },
-  patternSize: {
-    label: "Size",
-    mm: { min: 3, max: 20, step: 0.5 },
-    in: { min: 0.12, max: 0.8, step: 0.02 },
-  },
-  patternSpacing: {
-    label: "Spacing",
-    mm: { min: 1, max: 10, step: 0.5 },
-    in: { min: 0.04, max: 0.4, step: 0.02 },
-  },
-  handleWidth: {
-    label: "Width",
-    mm: { min: 20, max: 200, step: 1 },
-    in: { min: 0.8, max: 8, step: 0.1 },
-  },
-  handleHeight: {
-    label: "Height",
-    mm: { min: 10, max: 60, step: 1 },
-    in: { min: 0.4, max: 2.4, step: 0.1 },
-  },
-  handleTopOffset: {
-    label: "Top Offset",
-    mm: { min: 5, max: 60, step: 1 },
-    in: { min: 0.2, max: 2.4, step: 0.1 },
-  },
-};
+];
 
 export const HANDLE_SIDE_OPTIONS: { value: HandleSides; label: string }[] = [
   { value: "front-back", label: "Front & Back" },

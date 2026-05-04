@@ -16,25 +16,37 @@ export function ShapeSection({ config, isImperial, update }: Props) {
   return (
     <PanelSection title="Shape">
       <SliderControl
-        id="width"
+        min={40}
+        max={300}
+        step={1}
+        label="Width"
         value={config.width}
         isImperial={isImperial}
         onChange={(v) => update("width", v)}
       />
       <SliderControl
-        id="height"
+        min={20}
+        max={200}
+        step={1}
+        label="Height"
         value={config.height}
         isImperial={isImperial}
         onChange={(v) => update("height", v)}
       />
       <SliderControl
-        id="length"
+        min={40}
+        max={300}
+        step={1}
+        label="Length"
         value={config.length}
         isImperial={isImperial}
         onChange={(v) => update("length", v)}
       />
       <SliderControl
-        id="cornerRadius"
+        min={0}
+        max={60}
+        step={1}
+        label="Corner Radius"
         value={config.cornerRadius}
         isImperial={isImperial}
         onChange={(v) => update("cornerRadius", v)}
