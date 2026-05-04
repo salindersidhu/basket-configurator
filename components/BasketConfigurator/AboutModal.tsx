@@ -12,9 +12,9 @@ const TECH_TAGS = [
   "Next.js",
   "React",
   "Three.js",
-  "R3F",
+  "React Three Fiber",
   "three-bvh-csg",
-  "STL",
+  "manifold-3d",
 ];
 
 export function AboutModal({ open, onClose }: Props) {
@@ -57,8 +57,9 @@ export function AboutModal({ open, onClose }: Props) {
         export as STL.
       </p>
       <p className="text-sm text-muted leading-relaxed mb-4">
-        Geometry is generated using CSG boolean operations to ensure clean,
-        manifold meshes suitable for 3D printing.
+        The live preview uses fast Three.js CSG operations, while exports are
+        generated with Manifold to produce clean, slicer-friendly meshes for 3D
+        printing.
       </p>
       <div className="flex flex-wrap gap-1.5 mb-4">{renderTechTags()}</div>
       <p className="text-xs text-dim">

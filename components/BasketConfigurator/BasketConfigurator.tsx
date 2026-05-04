@@ -38,7 +38,7 @@ export function BasketConfigurator() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
 
-  const { geometry, geometryRef, busy } = useBasketGeometry(config);
+  const { geometry, busy } = useBasketGeometry(config);
 
   useEffect(() => {
     document.body.classList.toggle("light", !isDark);
@@ -47,13 +47,8 @@ export function BasketConfigurator() {
 
   const toggleTheme = () => setIsDark((d) => !d);
 
-  const handleExport = (filename: string) => {
-    const g = geometryRef.current;
-    if (!g) {
-      console.warn("Export attempted before geometry ready");
-      return;
-    }
-    exportSTL(g, filename);
+  const handleExport = async (filename: string) => {
+    await exportSTL(config, filename);
   };
 
   return (

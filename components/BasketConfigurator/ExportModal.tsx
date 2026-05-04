@@ -41,13 +41,13 @@ export function ExportModal({ open, onClose, onExport }: Props) {
       <div className="flex gap-2">
         <button
           onClick={onClose}
-          className="flex-1 py-2 rounded-lg text-sm border border-border text-muted cursor-pointer hover:bg-surface-hover transition-colors"
+          className="flex-1 py-2 rounded-lg text-sm border border-border text-muted cursor-pointer hover:bg-surface-hover transition-colors active:scale-[0.98]"
         >
           Cancel
         </button>
         <button
           onClick={handleExport}
-          className="flex-1 py-2 rounded-lg text-sm bg-accent text-white cursor-pointer hover:bg-accent-hover transition-colors"
+          className="flex-1 py-2 rounded-lg text-sm bg-accent text-white cursor-pointer hover:bg-accent-hover transition-colors active:scale-[0.98]"
         >
           Download
         </button>

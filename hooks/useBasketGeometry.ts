@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { generateBasket } from "@/lib/basket";
+import { generateBasket } from "@/lib/basket/BVHCSG";
 import type { BasketConfig } from "@/lib/types";
 
 export function useBasketGeometry(config: BasketConfig) {
