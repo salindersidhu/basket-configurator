@@ -3,7 +3,7 @@ import * as THREE from "three";
 import type { BasketConfig } from "@/lib/types";
 
 import { STLExporter } from "three/examples/jsm/exporters/STLExporter.js";
-import { generateBasket } from "./basket/manifold";
+import { generateBasket } from "./basket";
 
 export async function exportSTL(
   config: BasketConfig,

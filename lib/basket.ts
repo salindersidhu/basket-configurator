@@ -394,9 +394,12 @@ function manifoldToThreeGeometry(manifold: any): THREE.BufferGeometry {
   );
 
   geometry.setIndex(new THREE.BufferAttribute(mesh.triVerts, 1));
-  geometry.computeVertexNormals();
-  geometry.computeBoundingBox();
-  geometry.computeBoundingSphere();
 
-  return geometry;
+  const nonIndexed = geometry.toNonIndexed();
+  nonIndexed.computeVertexNormals();
+
+  nonIndexed.computeBoundingBox();
+  nonIndexed.computeBoundingSphere();
+
+  return nonIndexed;
 }
