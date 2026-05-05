@@ -57,8 +57,9 @@ export function AboutModal({ open, onClose }: Props) {
         export as STL.
       </p>
       <p className="text-sm text-muted leading-relaxed mb-4">
-        Geometry is generated using Manifold to produce clean, watertight meshes
-        that are reliable for 3D printing and compatible with modern slicers.
+        Geometry is generated using Manifold (WebAssembly) to produce fast,
+        watertight meshes that are reliable for 3D printing and compatible with
+        modern slicers.
       </p>
       <div className="flex flex-wrap gap-1.5 mb-4">{renderTechTags()}</div>
       <p className="text-xs text-dim">
