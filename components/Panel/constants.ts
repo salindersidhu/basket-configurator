@@ -86,9 +86,7 @@ export const PRESETS: Preset[] = [
     length: 90,
     wallThickness: 1.5,
     cornerRadius: 12,
-    pattern: "holes",
-    patternSize: 4,
-    patternSpacing: 2,
+    pattern: "none",
     handles: false,
   },
   {
