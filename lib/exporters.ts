@@ -1,23 +1,36 @@
 import * as THREE from "three";
-import { STLExporter } from "three/examples/jsm/exporters/STLExporter.js";
 
-export function exportSTL(
-  geometry: THREE.BufferGeometry,
+import type { BasketConfig } from "@/lib/types";
+
+import { STLExporter } from "three/examples/jsm/exporters/STLExporter.js";
+import { generateBasket } from "./basket";
+
+export async function exportSTL(
+  config: BasketConfig,
   filename = "basket.stl",
-): void {
+): Promise<void> {
+  const geometry = await generateBasket(config);
+
   if (!geometry) {
-    console.warn("exportSTL: no geometry provided");
+    console.warn("exportSTL: no geometry generated");
     return;
   }
 
-  const exporter = new STLExporter();
-
-  // Ensure geometry is up to date
   geometry.computeVertexNormals();
 
   const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+  mesh.updateMatrixWorld(true);
+
+  const exporter = new STLExporter();
   const parsed = exporter.parse(mesh, { binary: true });
-  const arrayBuffer = parsed instanceof DataView ? parsed.buffer : parsed;
+
+  const arrayBuffer =
+    parsed instanceof DataView
+      ? parsed.buffer.slice(
+          parsed.byteOffset,
+          parsed.byteOffset + parsed.byteLength,
+        )
+      : parsed;
 
   const blob = new Blob([arrayBuffer], {
     type: "application/octet-stream",

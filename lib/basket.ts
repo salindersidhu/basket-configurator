@@ -1,37 +1,28 @@
 import * as THREE from "three";
-import { Brush, Evaluator, SUBTRACTION } from "three-bvh-csg";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import Module from "manifold-3d";
 
 import type { BasketConfig } from "@/lib/types";
 
 const PATTERN_CLEARANCE_ABOVE_FLOOR_MM = 3;
 
-const evaluator = new Evaluator();
+let manifoldPromise: Promise<any> | null = null;
 
-const cylCache = new Map<string, THREE.CylinderGeometry>();
-const hexCache = new Map<string, THREE.CylinderGeometry>();
+async function getManifoldModule() {
+  manifoldPromise ??= (async () => {
+    const wasm = await Module();
+    wasm.setup();
+    return wasm;
+  })();
 
-function getCylinder(radius: number, depth: number, segments: number) {
-  const key = `${radius}-${depth}-${segments}`;
-  let geo = cylCache.get(key);
-  if (!geo) {
-    geo = new THREE.CylinderGeometry(radius, radius, depth, segments);
-    cylCache.set(key, geo);
-  }
-  return geo.clone();
+  return manifoldPromise;
 }
 
-function getHex(radius: number, depth: number) {
-  const key = `${radius}-${depth}`;
-  let geo = hexCache.get(key);
-  if (!geo) {
-    geo = new THREE.CylinderGeometry(radius, radius, depth, 6);
-    hexCache.set(key, geo);
-  }
-  return geo.clone();
-}
+export async function generateBasket(
+  config: BasketConfig,
+): Promise<THREE.BufferGeometry> {
+  const wasm = await getManifoldModule();
+  const { Manifold } = wasm;
 
-export function generateBasket(config: BasketConfig): THREE.BufferGeometry {
   const {
     width = 100,
     height = 60,
@@ -48,35 +39,38 @@ export function generateBasket(config: BasketConfig): THREE.BufferGeometry {
     handleTopOffset = 8,
   } = config;
 
-  let result: Brush;
   const cr = Math.min(cornerRadius, width / 4, length / 4);
   const innerCR = Math.max(0, cr - wallThickness);
   const baseThickness = wallThickness;
 
-  if (cr > 1) {
-    const geo = makeRoundedBox(width, height, length, cr);
-    result = new Brush(geo);
-  } else {
-    const geo = new THREE.BoxGeometry(width, height, length);
-    geo.translate(0, height / 2, 0);
-    result = new Brush(geo);
-  }
+  let result =
+    cr > 1
+      ? roundedBox(Manifold, width, height, length, cr)
+      : box(Manifold, width, height, length, 0, height / 2, 0);
 
   const innerW = width - wallThickness * 2;
   const innerL = length - wallThickness * 2;
   const innerH = height - baseThickness;
 
   if (innerW > 0 && innerH > 0 && innerL > 0) {
-    let innerGeo: THREE.BufferGeometry;
-    if (innerCR > 1) {
-      innerGeo = makeRoundedBox(innerW, innerH, innerL, innerCR);
-      // rounded box is bottom-aligned
-      innerGeo.translate(0, baseThickness, 0);
-    } else {
-      innerGeo = new THREE.BoxGeometry(innerW, innerH, innerL);
-      innerGeo.translate(0, baseThickness + innerH / 2, 0);
-    }
-    result = evaluator.evaluate(result, new Brush(innerGeo), SUBTRACTION);
+    const inner =
+      innerCR > 1
+        ? roundedBox(Manifold, innerW, innerH, innerL, innerCR).translate([
+            0,
+            baseThickness,
+            0,
+          ])
+        : box(
+            Manifold,
+            innerW,
+            innerH,
+            innerL,
+            0,
+            baseThickness + innerH / 2,
+            0,
+          );
+
+    result = result.subtract(inner);
   }
 
   const handleOnFB =
@@ -86,6 +80,7 @@ export function generateBasket(config: BasketConfig): THREE.BufferGeometry {
 
   if (handles && handleWidth > 0 && handleHeight > 0) {
     result = cutHandles(
+      Manifold,
       result,
       width,
       height,
@@ -101,6 +96,7 @@ export function generateBasket(config: BasketConfig): THREE.BufferGeometry {
 
   if (pattern !== "none") {
     result = cutPattern(
+      Manifold,
       result,
       pattern,
       width,
@@ -117,39 +113,118 @@ export function generateBasket(config: BasketConfig): THREE.BufferGeometry {
     );
   }
 
-  const geo = result.geometry;
-  geo.computeVertexNormals();
-  return geo;
+  return manifoldToThreeGeometry(result);
 }
 
-function makeRoundedBox(w: number, h: number, l: number, r: number) {
+function box(
+  Manifold: any,
+  w: number,
+  h: number,
+  l: number,
+  x: number,
+  y: number,
+  z: number,
+) {
+  return Manifold.cube([w, h, l], true).translate([x, y, z]);
+}
+
+function cylY(
+  Manifold: any,
+  radius: number,
+  height: number,
+  x: number,
+  y: number,
+  z: number,
+  segments = 32,
+) {
+  return Manifold.cylinder(height, radius, radius, segments, true)
+    .rotate([90, 0, 0])
+    .translate([x, y, z]);
+}
+
+function cylZ(
+  Manifold: any,
+  radius: number,
+  depth: number,
+  x: number,
+  y: number,
+  z: number,
+  segments = 32,
+) {
+  return Manifold.cylinder(depth, radius, radius, segments, true).translate([
+    x,
+    y,
+    z,
+  ]);
+}
+
+function cylX(
+  Manifold: any,
+  radius: number,
+  depth: number,
+  x: number,
+  y: number,
+  z: number,
+  segments = 32,
+) {
+  return Manifold.cylinder(depth, radius, radius, segments, true)
+    .rotate([0, 90, 0])
+    .translate([x, y, z]);
+}
+
+function roundedBox(Manifold: any, w: number, h: number, l: number, r: number) {
   r = Math.min(r, w / 2 - 0.1, l / 2 - 0.1);
-  const shape = new THREE.Shape();
-  const hw = w / 2;
-  const hl = l / 2;
 
-  shape.moveTo(-hw + r, -hl);
-  shape.lineTo(hw - r, -hl);
-  shape.quadraticCurveTo(hw, -hl, hw, -hl + r);
-  shape.lineTo(hw, hl - r);
-  shape.quadraticCurveTo(hw, hl, hw - r, hl);
-  shape.lineTo(-hw + r, hl);
-  shape.quadraticCurveTo(-hw, hl, -hw, hl - r);
-  shape.lineTo(-hw, -hl + r);
-  shape.quadraticCurveTo(-hw, -hl, -hw + r, -hl);
+  const parts = [
+    box(Manifold, w - 2 * r, h, l, 0, h / 2, 0),
+    box(Manifold, w, h, l - 2 * r, 0, h / 2, 0),
 
-  const geo = new THREE.ExtrudeGeometry(shape, {
-    depth: h,
-    bevelEnabled: false,
-    curveSegments: 8,
-  });
+    cylY(Manifold, r, h, -w / 2 + r, h / 2, -l / 2 + r),
+    cylY(Manifold, r, h, w / 2 - r, h / 2, -l / 2 + r),
+    cylY(Manifold, r, h, w / 2 - r, h / 2, l / 2 - r),
+    cylY(Manifold, r, h, -w / 2 + r, h / 2, l / 2 - r),
+  ];
 
-  geo.rotateX(-Math.PI / 2);
-  return geo;
+  return Manifold.union(parts);
+}
+
+function roundedRectCutout(
+  Manifold: any,
+  axis: "x" | "z",
+  w: number,
+  h: number,
+  depth: number,
+  x: number,
+  y: number,
+  z: number,
+) {
+  const r = Math.min(5, w / 2, h / 2);
+
+  const parts =
+    axis === "z"
+      ? [
+          box(Manifold, w, h - 2 * r, depth, x, y + h / 2, z),
+          box(Manifold, w - 2 * r, h, depth, x, y + h / 2, z),
+          cylZ(Manifold, r, depth, x - w / 2 + r, y + r, z),
+          cylZ(Manifold, r, depth, x + w / 2 - r, y + r, z),
+          cylZ(Manifold, r, depth, x - w / 2 + r, y + h - r, z),
+          cylZ(Manifold, r, depth, x + w / 2 - r, y + h - r, z),
+        ]
+      : [
+          box(Manifold, depth, h - 2 * r, w, x, y + h / 2, z),
+          box(Manifold, depth, h, w - 2 * r, x, y + h / 2, z),
+          cylX(Manifold, r, depth, x, y + r, z - w / 2 + r),
+          cylX(Manifold, r, depth, x, y + r, z + w / 2 - r),
+          cylX(Manifold, r, depth, x, y + h - r, z - w / 2 + r),
+          cylX(Manifold, r, depth, x, y + h - r, z + w / 2 - r),
+        ];
+
+  return Manifold.union(parts);
 }
 
 function cutHandles(
-  brush: Brush,
+  Manifold: any,
+  basket: any,
   width: number,
   height: number,
   length: number,
@@ -159,69 +234,44 @@ function cutHandles(
   topOffset: number,
   onFB: boolean,
   onLR: boolean,
-): Brush {
-  const geos: THREE.BufferGeometry[] = [];
+) {
+  const cutters: any[] = [];
+  const depth = wallT * 8;
 
-  const add = (axis: "x" | "z", pos: number) => {
-    const w = Math.min(handleWidth, axis === "x" ? length - 20 : width - 20);
+  if (onFB) {
+    const w = Math.min(handleWidth, width - 20);
     const h = Math.min(handleHeight, height - topOffset - wallT - 5);
-
-    if (w <= 0 || h <= 0) return;
-
-    const shape = makeRoundedRect(w, h);
-    const depth = wallT * 4;
     const y = height - topOffset - h;
 
-    for (const sign of [1, -1]) {
-      const geo = new THREE.ExtrudeGeometry(shape, {
-        depth,
-        bevelEnabled: false,
-      });
-
-      geo.translate(0, 0, -depth / 2);
-
-      if (axis === "z") {
-        geo.translate(0, y, sign * pos);
-      } else {
-        applyTransform(
-          geo,
-          new THREE.Vector3(sign * pos, y, 0),
-          new THREE.Euler(0, Math.PI / 2, 0),
-        );
-      }
-
-      geos.push(geo);
+    if (w > 0 && h > 0) {
+      cutters.push(
+        roundedRectCutout(Manifold, "z", w, h, depth, 0, y, length / 2),
+        roundedRectCutout(Manifold, "z", w, h, depth, 0, y, -length / 2),
+      );
     }
-  };
+  }
 
-  if (onFB) add("z", length / 2);
-  if (onLR) add("x", width / 2);
+  if (onLR) {
+    const w = Math.min(handleWidth, length - 20);
+    const h = Math.min(handleHeight, height - topOffset - wallT - 5);
+    const y = height - topOffset - h;
 
-  if (!geos.length) return brush;
+    if (w > 0 && h > 0) {
+      cutters.push(
+        roundedRectCutout(Manifold, "x", w, h, depth, width / 2, y, 0),
+        roundedRectCutout(Manifold, "x", w, h, depth, -width / 2, y, 0),
+      );
+    }
+  }
 
-  const merged = mergeGeometries(geos, false);
-  if (!merged) return brush;
-  return evaluator.evaluate(brush, new Brush(merged), SUBTRACTION);
-}
+  if (!cutters.length) return basket;
 
-function makeRoundedRect(w: number, h: number): THREE.Shape {
-  const shape = new THREE.Shape();
-  const r = Math.min(5, w / 2, h / 2);
-  const hw = w / 2;
-  shape.moveTo(-hw + r, 0);
-  shape.lineTo(hw - r, 0);
-  shape.quadraticCurveTo(hw, 0, hw, r);
-  shape.lineTo(hw, h - r);
-  shape.quadraticCurveTo(hw, h, hw - r, h);
-  shape.lineTo(-hw + r, h);
-  shape.quadraticCurveTo(-hw, h, -hw, h - r);
-  shape.lineTo(-hw, r);
-  shape.quadraticCurveTo(-hw, 0, -hw + r, 0);
-  return shape;
+  return basket.subtract(Manifold.union(cutters));
 }
 
 function cutPattern(
-  brush: Brush,
+  Manifold: any,
+  basket: any,
   pattern: BasketConfig["pattern"],
   bWidth: number,
   bHeight: number,
@@ -234,62 +284,46 @@ function cutPattern(
   handleWidth: number,
   handleHeight: number,
   handleTopOffset: number,
-): Brush {
+) {
   const baseThickness = wallT;
-  const depth = wallT * 4;
+  const depth = wallT * 8;
   const buffer = size + 4;
+  const cutters: any[] = [];
 
   const walls = [
+    { faceW: bWidth, axis: "z" as const, pos: bLength / 2, handle: handleOnFB },
     {
       faceW: bWidth,
-      faceH: bHeight,
-      axis: "z" as const,
-      pos: bLength / 2,
-      handle: handleOnFB,
-    },
-    {
-      faceW: bWidth,
-      faceH: bHeight,
       axis: "z" as const,
       pos: -bLength / 2,
       handle: handleOnFB,
     },
     {
       faceW: bLength,
-      faceH: bHeight,
       axis: "x" as const,
       pos: -bWidth / 2,
       handle: handleOnLR,
     },
-    {
-      faceW: bLength,
-      faceH: bHeight,
-      axis: "x" as const,
-      pos: bWidth / 2,
-      handle: handleOnLR,
-    },
+    { faceW: bLength, axis: "x" as const, pos: bWidth / 2, handle: handleOnLR },
   ];
-
-  const all: THREE.BufferGeometry[] = [];
 
   for (const wall of walls) {
     const step = size * 2 + spacing;
     const radius = size;
 
     const cols = Math.floor((wall.faceW - radius * 2) / step);
-    const rows = Math.floor((wall.faceH - radius * 2) / step);
+    const rows = Math.floor((bHeight - radius * 2) / step);
 
     if (cols <= 0 || rows <= 0) continue;
 
     const startX = (-(cols - 1) * step) / 2;
     const startY = radius;
-
     const minY = baseThickness + PATTERN_CLEARANCE_ABOVE_FLOOR_MM + radius;
 
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const x = startX + c * step;
-        const y = startY + r * step;
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const x = startX + col * step;
+        const y = startY + row * step;
 
         if (y < minY) continue;
 
@@ -305,45 +339,24 @@ function cutPattern(
             wallT,
             buffer,
           )
-        )
+        ) {
           continue;
-
-        const geo =
-          pattern === "holes"
-            ? getCylinder(radius, depth, 12)
-            : getHex(radius, depth);
-
-        if (wall.axis === "z") {
-          applyTransform(
-            geo,
-            new THREE.Vector3(x, y, wall.pos),
-            new THREE.Euler(Math.PI / 2, 0, 0),
-          );
-        } else {
-          applyTransform(
-            geo,
-            new THREE.Vector3(wall.pos, y, x),
-            new THREE.Euler(0, 0, Math.PI / 2),
-          );
         }
 
-        all.push(geo);
+        const segments = pattern === "holes" ? 24 : 6;
+
+        if (wall.axis === "z") {
+          cutters.push(cylZ(Manifold, radius, depth, x, y, wall.pos, segments));
+        } else {
+          cutters.push(cylX(Manifold, radius, depth, wall.pos, y, x, segments));
+        }
       }
     }
   }
 
-  if (!all.length) return brush;
+  if (!cutters.length) return basket;
 
-  let res = brush;
-  const batchSize = 150;
-
-  for (let i = 0; i < all.length; i += batchSize) {
-    const merged = mergeGeometries(all.slice(i, i + batchSize), false);
-    if (merged) {
-      res = evaluator.evaluate(res, new Brush(merged), SUBTRACTION);
-    }
-  }
-  return res;
+  return basket.subtract(Manifold.union(cutters));
 }
 
 function isInsideHandleZone(
@@ -370,13 +383,23 @@ function isInsideHandleZone(
   );
 }
 
-function applyTransform(
-  geo: THREE.BufferGeometry,
-  pos: THREE.Vector3,
-  rot: THREE.Euler,
-) {
-  const m = new THREE.Matrix4();
-  const q = new THREE.Quaternion().setFromEuler(rot);
-  m.compose(pos, q, new THREE.Vector3(1, 1, 1));
-  geo.applyMatrix4(m);
+function manifoldToThreeGeometry(manifold: any): THREE.BufferGeometry {
+  const mesh = manifold.getMesh();
+
+  const geometry = new THREE.BufferGeometry();
+
+  geometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(mesh.vertProperties, 3),
+  );
+
+  geometry.setIndex(new THREE.BufferAttribute(mesh.triVerts, 1));
+
+  const nonIndexed = geometry.toNonIndexed();
+  nonIndexed.computeVertexNormals();
+
+  nonIndexed.computeBoundingBox();
+  nonIndexed.computeBoundingSphere();
+
+  return nonIndexed;
 }

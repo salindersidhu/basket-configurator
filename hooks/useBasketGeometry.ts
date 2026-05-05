@@ -1,41 +1,50 @@
 "use client";
 
+import * as THREE from "three";
+
 import { useEffect, useRef, useState } from "react";
 
 import { generateBasket } from "@/lib/basket";
 import type { BasketConfig } from "@/lib/types";
 
 export function useBasketGeometry(config: BasketConfig) {
-  const geometryRef = useRef<ReturnType<typeof generateBasket> | null>(null);
-
-  const [geometry, setGeometry] = useState<ReturnType<
-    typeof generateBasket
-  > | null>(null);
-
+  const geometryRef = useRef<THREE.BufferGeometry | null>(null);
+  const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [busy, setBusy] = useState(false);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     setBusy(true);
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    timeoutRef.current = setTimeout(() => {
-      const geo = generateBasket(config);
+    timeoutRef.current = setTimeout(async () => {
+      try {
+        const geo = await generateBasket(config);
 
-      setGeometry((prev) => {
-        prev?.dispose();
-        geometryRef.current = geo;
-        return geo;
-      });
+        if (cancelled) {
+          geo.dispose();
+          return;
+        }
 
-      setBusy(false);
+        setGeometry((prev) => {
+          prev?.dispose();
+          geometryRef.current = geo;
+          return geo;
+        });
+      } finally {
+        if (!cancelled) {
+          setBusy(false);
+        }
+      }
     }, 100);
 
     return () => {
+      cancelled = true;
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

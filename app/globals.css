@@ -310,3 +310,12 @@ input[type="color"]::-moz-color-swatch {
     transform: translateY(0) scale(1);
   }
 }
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
