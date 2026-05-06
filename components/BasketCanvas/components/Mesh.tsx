@@ -1,14 +1,13 @@
 import * as THREE from "three";
 
-export function Mesh({
-  geometry,
-  color,
-}: {
+type Props = {
   geometry: THREE.BufferGeometry;
   color: string;
-}) {
+};
+
+export function Mesh({ geometry, color }: Props) {
   return (
-    <mesh geometry={geometry} castShadow receiveShadow>
+    <mesh geometry={geometry} castShadow receiveShadow={false}>
       <meshStandardMaterial
         color={color}
         metalness={0.1}

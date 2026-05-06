@@ -1,11 +1,15 @@
 import * as THREE from "three";
-import { Bounds, OrbitControls, useBounds } from "@react-three/drei";
-import { useEffect } from "react";
 
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+
+import { OrbitControls } from "@react-three/drei";
+import { useRef } from "react";
+
+import { Camera } from "./Camera";
+import { Grid } from "./Grid";
 import { Lights } from "./Lights";
-import { ThemeGrid } from "./ThemeGrid";
 import { Mesh } from "./Mesh";
-import { COLORS } from "../constants";
+import { CAMERA, COLORS } from "../constants";
 
 type Props = {
   geometry: THREE.BufferGeometry | null;
@@ -13,22 +17,8 @@ type Props = {
   isDark: boolean;
 };
 
-function Fit({ geometry }: { geometry: THREE.BufferGeometry | null }) {
-  const bounds = useBounds();
-
-  useEffect(() => {
-    if (!geometry) return;
-
-    // wait for r3f commit
-    requestAnimationFrame(() => {
-      bounds.refresh().fit();
-    });
-  }, [geometry, bounds]);
-
-  return null;
-}
-
 export function Scene({ geometry, color, isDark }: Props) {
+  const controlsRef = useRef<OrbitControlsImpl | null>(null);
   return (
     <>
       <color
@@ -37,20 +27,19 @@ export function Scene({ geometry, color, isDark }: Props) {
       />
 
       <Lights />
-      <ThemeGrid isDark={isDark} />
+      <Grid isDark={isDark} />
 
-      {geometry && (
-        <Bounds fit clip margin={1.2}>
-          <Mesh geometry={geometry} color={color} />
-          <Fit geometry={geometry} />
-        </Bounds>
-      )}
+      {geometry && <Mesh geometry={geometry} color={color} />}
+
+      <Camera geometry={geometry} controlsRef={controlsRef} />
 
       <OrbitControls
+        ref={controlsRef}
         makeDefault
         enableDamping
-        dampingFactor={0.08}
-        target={[0, 30, 0]}
+        dampingFactor={CAMERA.dampingFactor}
+        minDistance={CAMERA.minDistance}
+        maxDistance={CAMERA.maxDistance}
       />
     </>
   );
