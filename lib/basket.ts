@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import Module from "manifold-3d";
 
-import type { BasketConfig } from "@/lib/types";
+import type { BasketGeometryConfig } from "@/lib/types";
 
 const PATTERN_CLEARANCE_ABOVE_FLOOR_MM = 3;
 
@@ -18,7 +18,7 @@ async function getManifoldModule() {
 }
 
 export async function generateBasket(
-  config: BasketConfig,
+  config: BasketGeometryConfig,
 ): Promise<THREE.BufferGeometry> {
   const wasm = await getManifoldModule();
   const { Manifold } = wasm;
@@ -32,8 +32,7 @@ export async function generateBasket(
     pattern = "none",
     patternSize = 8,
     patternSpacing = 3,
-    handles = true,
-    handleSides = "front-back",
+    handles = "none",
     handleWidth = 60,
     handleHeight = 20,
     handleTopOffset = 8,
@@ -73,12 +72,11 @@ export async function generateBasket(
     result = result.subtract(inner);
   }
 
-  const handleOnFB =
-    handles && (handleSides === "front-back" || handleSides === "all");
-  const handleOnLR =
-    handles && (handleSides === "left-right" || handleSides === "all");
+  const handleOnFB = handles === "ends" || handles === "all";
+  const handleOnLR = handles === "sides" || handles === "all";
+  const hasHandles = handles !== "none";
 
-  if (handles && handleWidth > 0 && handleHeight > 0) {
+  if (hasHandles && handleWidth > 0 && handleHeight > 0) {
     result = cutHandles(
       Manifold,
       result,
@@ -272,7 +270,7 @@ function cutHandles(
 function cutPattern(
   Manifold: any,
   basket: any,
-  pattern: BasketConfig["pattern"],
+  pattern: BasketGeometryConfig["pattern"],
   bWidth: number,
   bHeight: number,
   bLength: number,

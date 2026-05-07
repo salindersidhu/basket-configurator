@@ -13,7 +13,6 @@ import { useBasketGeometry } from "@/hooks/useBasketGeometry";
 import { ExportModal } from "./ExportModal";
 
 export function BasketConfigurator() {
-  const config = useBasketStore((s) => s.config);
   const color = useBasketStore((s) => s.config.color);
   const exportBasket = useBasketStore((s) => s.exportBasket);
 
@@ -21,7 +20,7 @@ export function BasketConfigurator() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
 
-  const { geometry, busy } = useBasketGeometry(config);
+  const { geometry, busy } = useBasketGeometry();
 
   useEffect(() => {
     document.body.classList.toggle("light", !isDark);

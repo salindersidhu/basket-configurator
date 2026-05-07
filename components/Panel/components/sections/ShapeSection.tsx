@@ -1,15 +1,22 @@
+import { useShallow } from "zustand/react/shallow";
+
 import { useBasketStore } from "@/stores/useBasketStore";
 
 import { PanelSection } from "../PanelSection";
 import { SliderControl } from "../SliderControl";
 
 export function ShapeSection() {
-  const width = useBasketStore((s) => s.config.width);
-  const height = useBasketStore((s) => s.config.height);
-  const length = useBasketStore((s) => s.config.length);
-  const cornerRadius = useBasketStore((s) => s.config.cornerRadius);
-  const isImperial = useBasketStore((s) => s.isImperial);
-  const update = useBasketStore((s) => s.update);
+  const { width, height, length, cornerRadius, isImperial, update } =
+    useBasketStore(
+      useShallow((s) => ({
+        width: s.config.width,
+        height: s.config.height,
+        length: s.config.length,
+        cornerRadius: s.config.cornerRadius,
+        isImperial: s.isImperial,
+        update: s.update,
+      })),
+    );
 
   return (
     <PanelSection title="Shape">

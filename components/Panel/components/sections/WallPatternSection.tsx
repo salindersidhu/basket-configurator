@@ -1,3 +1,7 @@
+import { useShallow } from "zustand/react/shallow";
+
+import type { PatternType } from "@/lib/types";
+
 import { useBasketStore } from "@/stores/useBasketStore";
 
 import { PanelSection } from "../PanelSection";
@@ -5,11 +9,16 @@ import { SegmentedControl } from "../SegmentedControl";
 import { SliderControl } from "../SliderControl";
 
 export function WallPatternSection() {
-  const pattern = useBasketStore((s) => s.config.pattern);
-  const patternSize = useBasketStore((s) => s.config.patternSize);
-  const patternSpacing = useBasketStore((s) => s.config.patternSpacing);
-  const isImperial = useBasketStore((s) => s.isImperial);
-  const update = useBasketStore((s) => s.update);
+  const { pattern, patternSize, patternSpacing, isImperial, update } =
+    useBasketStore(
+      useShallow((s) => ({
+        pattern: s.config.pattern,
+        patternSize: s.config.patternSize,
+        patternSpacing: s.config.patternSpacing,
+        isImperial: s.isImperial,
+        update: s.update,
+      })),
+    );
 
   return (
     <PanelSection title="Wall Pattern">
@@ -20,7 +29,7 @@ export function WallPatternSection() {
           { value: "holes", label: "Circles" },
           { value: "hexagons", label: "Hexagons" },
         ]}
-        onChange={(val) => update("pattern", val as any)}
+        onChange={(val) => update("pattern", val as PatternType)}
       />
       {pattern !== "none" && (
         <>

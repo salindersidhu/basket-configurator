@@ -3,11 +3,29 @@
 import * as THREE from "three";
 
 import { useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { generateBasket } from "@/lib/basket";
-import type { BasketConfig } from "@/lib/types";
+import { useBasketStore } from "@/stores/useBasketStore";
 
-export function useBasketGeometry(config: BasketConfig) {
+export function useBasketGeometry() {
+  const config = useBasketStore(
+    useShallow((s) => ({
+      width: s.config.width,
+      height: s.config.height,
+      length: s.config.length,
+      wallThickness: s.config.wallThickness,
+      cornerRadius: s.config.cornerRadius,
+      pattern: s.config.pattern,
+      patternSize: s.config.patternSize,
+      patternSpacing: s.config.patternSpacing,
+      handles: s.config.handles,
+      handleWidth: s.config.handleWidth,
+      handleHeight: s.config.handleHeight,
+      handleTopOffset: s.config.handleTopOffset,
+    })),
+  );
+
   const geometryRef = useRef<THREE.BufferGeometry | null>(null);
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [busy, setBusy] = useState(false);
@@ -49,21 +67,7 @@ export function useBasketGeometry(config: BasketConfig) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [
-    config.width,
-    config.height,
-    config.length,
-    config.wallThickness,
-    config.cornerRadius,
-    config.pattern,
-    config.patternSize,
-    config.patternSpacing,
-    config.handles,
-    config.handleSides,
-    config.handleWidth,
-    config.handleHeight,
-    config.handleTopOffset,
-  ]);
+  }, [config]);
 
   return { geometry, geometryRef, busy };
 }

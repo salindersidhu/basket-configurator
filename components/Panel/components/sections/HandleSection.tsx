@@ -1,5 +1,6 @@
-import type { BasketConfig } from "@/lib/types";
+import { useShallow } from "zustand/react/shallow";
 
+import type { Handles } from "@/lib/types";
 import { useBasketStore } from "@/stores/useBasketStore";
 
 import { PanelSection } from "../PanelSection";
@@ -7,40 +8,44 @@ import { SegmentedControl } from "../SegmentedControl";
 import { SliderControl } from "../SliderControl";
 
 export function HandleSection() {
-  const handles = useBasketStore((s) => s.config.handles);
-  const handleSides = useBasketStore((s) => s.config.handleSides);
-  const handleWidth = useBasketStore((s) => s.config.handleWidth);
-  const handleHeight = useBasketStore((s) => s.config.handleHeight);
-  const handleTopOffset = useBasketStore((s) => s.config.handleTopOffset);
-  const isImperial = useBasketStore((s) => s.isImperial);
-  const update = useBasketStore((s) => s.update);
+  const {
+    handles,
+    handleWidth,
+    handleHeight,
+    handleTopOffset,
+    isImperial,
+    update,
+  } = useBasketStore(
+    useShallow((s) => ({
+      handles: s.config.handles,
+      handleWidth: s.config.handleWidth,
+      handleHeight: s.config.handleHeight,
+      handleTopOffset: s.config.handleTopOffset,
+      isImperial: s.isImperial,
+      update: s.update,
+    })),
+  );
+
+  const hasHandles = handles !== "none";
+
+  function handleChange(val: string) {
+    update("handles", val as Handles);
+  }
 
   return (
     <PanelSection title="Handles">
-      <label className="flex items-center gap-2 cursor-pointer group">
-        <input
-          type="checkbox"
-          checked={handles}
-          onChange={(e) => update("handles", e.target.checked)}
-        />
-        <span className="text-xs text-muted group-hover:text-txt transition-colors">
-          Enable handles
-        </span>
-      </label>
-      {handles && (
-        <div className={`mt-3 ${handles ? "" : "hidden"}`}>
-          <div className="mb-3">
-            <span className="text-xs text-muted block mb-1.5">Placement</span>
-            <SegmentedControl
-              value={handleSides}
-              options={[
-                { value: "front-back", label: "Front & Back" },
-                { value: "left-right", label: "Left & Right" },
-                { value: "all", label: "All Sides" },
-              ]}
-              onChange={(val) => update("handleSides", val as any)}
-            />
-          </div>
+      <SegmentedControl
+        value={handles}
+        options={[
+          { value: "none", label: "None" },
+          { value: "ends", label: "Ends" },
+          { value: "sides", label: "Sides" },
+          { value: "all", label: "All" },
+        ]}
+        onChange={handleChange}
+      />
+      {hasHandles && (
+        <>
           <SliderControl
             min={20}
             max={200}
@@ -68,7 +73,7 @@ export function HandleSection() {
             isImperial={isImperial}
             onChange={(v) => update("handleTopOffset", v)}
           />
-        </div>
+        </>
       )}
     </PanelSection>
   );
