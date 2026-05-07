@@ -6,7 +6,7 @@
 
 A 3D basket configurator for 3D printing. Design a custom basket with configurable dimensions, wall patterns, and handle cutouts, then export to STL.
 
-<img src="https://images.squarespace-cdn.com/content/v1/5cc22d6593a63233d214110c/1597710652025-QEY2UL92MLE1E2BX4WSJ/Vercel+%28Zeit%29.jpg" width="130" /> <img src="https://miro.medium.com/v2/resize:fit:1258/1*okiCUvTUJLtOqJv1dMzwpA.png" width="130" /> <img src="https://user-images.githubusercontent.com/98990/89711240-4172a200-d989-11ea-8d51-4aaf922fa407.png" width="130" /> <img src="https://miro.medium.com/max/400/1*mrOXGyIa3BlPK80peLmEbA.png" width="130" /> <img src="https://camo.githubusercontent.com/86918d276006681ebba60a6dba69d4c090751d7c2487ffe3608fa126cbb5b8f2/68747470733a2f2f63646e2e7261776769742e636f6d2f7a656b652f6a6176617363726970742d79656c6c6f772f6d61737465722f6c6f676f2e737667" width="130" /> <img src="https://images.seeklogo.com/logo-png/43/2/three-js-logo-png_seeklogo-431124.png" width="130" />
+<img src="https://images.squarespace-cdn.com/content/v1/5cc22d6593a63233d214110c/1597710652025-QEY2UL92MLE1E2BX4WSJ/Vercel+%28Zeit%29.jpg" width="110" /> <img src="https://miro.medium.com/v2/resize:fit:1258/1*okiCUvTUJLtOqJv1dMzwpA.png" width="110" /> <img src="https://user-images.githubusercontent.com/98990/89711240-4172a200-d989-11ea-8d51-4aaf922fa407.png" width="110" /> <img src="https://miro.medium.com/max/400/1*mrOXGyIa3BlPK80peLmEbA.png" width="110" /> <img src="https://camo.githubusercontent.com/86918d276006681ebba60a6dba69d4c090751d7c2487ffe3608fa126cbb5b8f2/68747470733a2f2f63646e2e7261776769742e636f6d2f7a656b652f6a6176617363726970742d79656c6c6f772f6d61737465722f6c6f676f2e737667" width="110" /> <img src="https://images.seeklogo.com/logo-png/43/2/three-js-logo-png_seeklogo-431124.png" width="110" /> <img src="https://files.svgcdn.io/devicon-plain/zustand.png" width="110" />
 
 ## Features
 
@@ -65,7 +65,7 @@ Please see our [Contributing Guide](/CONTRIBUTING.md) for more info.
 ## Project Structure
 
       .
-      ├── app                               #
+      ├── app
       │   ├── favicon.ico                   # App favicon
       │   ├── global.css                    # Global styles
       │   ├── layout.tsx                    # Root layout
@@ -80,6 +80,8 @@ Please see our [Contributing Guide](/CONTRIBUTING.md) for more info.
       │   │   ├── index.ts                  # Entry point
       │   │   ├── BasketConfigurator.tsx    # Main UI + layout
       │   │   └── ...                       # Feature-specific subcomponents
+      │   └── ...
+      ├── stores                            # Global state (Zustand)
       │   └── ...
       ├── hooks/                            # Custom React hooks
       │   └── ...

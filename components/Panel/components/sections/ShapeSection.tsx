@@ -1,18 +1,23 @@
-import type { BasketConfig } from "@/lib/types";
+import { useShallow } from "zustand/react/shallow";
+
+import { useBasketStore } from "@/stores/useBasketStore";
 
 import { PanelSection } from "../PanelSection";
 import { SliderControl } from "../SliderControl";
 
-interface Props {
-  config: BasketConfig;
-  isImperial: boolean;
-  update: <K extends keyof BasketConfig>(
-    key: K,
-    value: BasketConfig[K],
-  ) => void;
-}
+export function ShapeSection() {
+  const { width, height, length, cornerRadius, isImperial, update } =
+    useBasketStore(
+      useShallow((s) => ({
+        width: s.config.width,
+        height: s.config.height,
+        length: s.config.length,
+        cornerRadius: s.config.cornerRadius,
+        isImperial: s.isImperial,
+        update: s.update,
+      })),
+    );
 
-export function ShapeSection({ config, isImperial, update }: Props) {
   return (
     <PanelSection title="Shape">
       <SliderControl
@@ -20,7 +25,7 @@ export function ShapeSection({ config, isImperial, update }: Props) {
         max={300}
         step={1}
         label="Width"
-        value={config.width}
+        value={width}
         isImperial={isImperial}
         onChange={(v) => update("width", v)}
       />
@@ -29,7 +34,7 @@ export function ShapeSection({ config, isImperial, update }: Props) {
         max={200}
         step={1}
         label="Height"
-        value={config.height}
+        value={height}
         isImperial={isImperial}
         onChange={(v) => update("height", v)}
       />
@@ -38,7 +43,7 @@ export function ShapeSection({ config, isImperial, update }: Props) {
         max={300}
         step={1}
         label="Length"
-        value={config.length}
+        value={length}
         isImperial={isImperial}
         onChange={(v) => update("length", v)}
       />
@@ -47,7 +52,7 @@ export function ShapeSection({ config, isImperial, update }: Props) {
         max={60}
         step={1}
         label="Corner Radius"
-        value={config.cornerRadius}
+        value={cornerRadius}
         isImperial={isImperial}
         onChange={(v) => update("cornerRadius", v)}
       />

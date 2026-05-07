@@ -1,12 +1,12 @@
+import { useBasketStore } from "@/stores/useBasketStore";
+
 import { PanelSection } from "../PanelSection";
 import { SegmentedControl } from "../SegmentedControl";
 
-type Props = {
-  isImperial: boolean;
-  setIsImperial: (val: boolean) => void;
-};
+export function UnitSection() {
+  const isImperial = useBasketStore((s) => s.isImperial);
+  const setIsImperial = useBasketStore((s) => s.setIsImperial);
 
-export function UnitSection({ isImperial, setIsImperial }: Props) {
   return (
     <PanelSection title="Units">
       <SegmentedControl

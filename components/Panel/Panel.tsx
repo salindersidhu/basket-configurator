@@ -1,9 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
-import type { BasketConfig } from "@/lib/types";
-
 import {
   ColorSection,
   PresetSection,
@@ -15,27 +11,10 @@ import {
 } from "./components/sections";
 
 interface Props {
-  config: BasketConfig;
-  onChange: (config: BasketConfig) => void;
-  onColorChange?: (hex: string) => void;
   onExport?: () => void;
 }
 
-export function Panel({ config, onChange, onColorChange, onExport }: Props) {
-  const [isImperial, setIsImperial] = useState(false);
-
-  function update<K extends keyof BasketConfig>(
-    key: K,
-    value: BasketConfig[K],
-  ) {
-    const next = { ...config, [key]: value };
-    onChange(next);
-
-    if (key === "color") {
-      onColorChange?.(value as string);
-    }
-  }
-
+export function Panel({ onExport }: Props) {
   return (
     <div className="flex flex-col h-full">
       <div className="px-5 py-4 border-b border-border flex items-center gap-3">
@@ -50,25 +29,13 @@ export function Panel({ config, onChange, onColorChange, onExport }: Props) {
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-5 py-4 sections-container">
-        <PresetSection config={config} updateAll={(next) => onChange(next)} />
-        <ColorSection config={config} update={update} />
-        <UnitSection isImperial={isImperial} setIsImperial={setIsImperial} />
-        <ShapeSection config={config} isImperial={isImperial} update={update} />
-        <StructureSection
-          config={config}
-          isImperial={isImperial}
-          update={update}
-        />
-        <WallPatternSection
-          config={config}
-          isImperial={isImperial}
-          update={update}
-        />
-        <HandleSection
-          config={config}
-          isImperial={isImperial}
-          update={update}
-        />
+        <PresetSection />
+        <ColorSection />
+        <UnitSection />
+        <ShapeSection />
+        <StructureSection />
+        <WallPatternSection />
+        <HandleSection />
       </div>
       <div className="px-5 py-4 border-t border-border">
         <button

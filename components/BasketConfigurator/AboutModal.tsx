@@ -14,7 +14,7 @@ const TECH_TAGS = [
   "Three.js",
   "React Three Fiber",
   "manifold-3d",
-  "STL Export",
+  "Zustand",
 ];
 
 export function AboutModal({ open, onClose }: Props) {

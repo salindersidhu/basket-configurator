@@ -1,14 +1,14 @@
 import type { BasketConfig } from "@/lib/types";
 
+import { useBasketStore } from "@/stores/useBasketStore";
+
 import { PRESETS } from "../../constants";
 import { PanelSection } from "../PanelSection";
 
-type Props = {
-  config: BasketConfig;
-  updateAll: (next: BasketConfig) => void;
-};
+export function PresetSection() {
+  const config = useBasketStore((s) => s.config);
+  const updateAll = useBasketStore((s) => s.updateAll);
 
-export function PresetSection({ config, updateAll }: Props) {
   function setPreset(preset: (typeof PRESETS)[number]) {
     const next: BasketConfig = {
       ...config,
@@ -16,12 +16,11 @@ export function PresetSection({ config, updateAll }: Props) {
       height: preset.height,
       length: preset.length,
       wallThickness: preset.wallThickness,
-      cornerRadius: preset.cornerRadius || 0,
-      pattern: preset.pattern || "none",
+      cornerRadius: preset.cornerRadius ?? 0,
+      pattern: preset.pattern ?? "none",
       patternSize: preset.patternSize ?? 8,
       patternSpacing: preset.patternSpacing ?? 3,
-      handles: preset.handles ?? false,
-      handleSides: preset.handleSides || "front-back",
+      handles: preset.handles ?? "ends",
       handleWidth: preset.handleWidth ?? 60,
       handleHeight: preset.handleHeight ?? 20,
       handleTopOffset: preset.handleTopOffset ?? 8,

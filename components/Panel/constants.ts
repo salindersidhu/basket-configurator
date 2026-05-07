@@ -1,4 +1,4 @@
-import { Preset, HandleSides } from "@/lib/types";
+import { Preset } from "@/lib/types";
 
 export const PRESETS: Preset[] = [
   {
@@ -9,7 +9,7 @@ export const PRESETS: Preset[] = [
     wallThickness: 2,
     cornerRadius: 0,
     pattern: "none",
-    handles: false,
+    handles: "none",
   },
   {
     name: "Storage Bin",
@@ -19,8 +19,7 @@ export const PRESETS: Preset[] = [
     wallThickness: 3,
     cornerRadius: 0,
     pattern: "none",
-    handles: true,
-    handleSides: "front-back",
+    handles: "ends",
     handleWidth: 80,
     handleHeight: 25,
     handleTopOffset: 10,
@@ -35,7 +34,7 @@ export const PRESETS: Preset[] = [
     pattern: "hexagons",
     patternSize: 6,
     patternSpacing: 2,
-    handles: false,
+    handles: "none",
   },
   {
     name: "Fruit Basket",
@@ -47,8 +46,7 @@ export const PRESETS: Preset[] = [
     pattern: "holes",
     patternSize: 8,
     patternSpacing: 4,
-    handles: true,
-    handleSides: "front-back",
+    handles: "ends",
     handleWidth: 70,
     handleHeight: 20,
     handleTopOffset: 8,
@@ -61,7 +59,7 @@ export const PRESETS: Preset[] = [
     wallThickness: 2,
     cornerRadius: 8,
     pattern: "none",
-    handles: false,
+    handles: "none",
   },
   {
     name: "Laundry Hamper",
@@ -73,8 +71,7 @@ export const PRESETS: Preset[] = [
     pattern: "holes",
     patternSize: 10,
     patternSpacing: 5,
-    handles: true,
-    handleSides: "all",
+    handles: "all",
     handleWidth: 80,
     handleHeight: 30,
     handleTopOffset: 15,
@@ -87,7 +84,7 @@ export const PRESETS: Preset[] = [
     wallThickness: 1.5,
     cornerRadius: 12,
     pattern: "none",
-    handles: false,
+    handles: "none",
   },
   {
     name: "Tool Caddy",
@@ -99,8 +96,7 @@ export const PRESETS: Preset[] = [
     pattern: "hexagons",
     patternSize: 8,
     patternSpacing: 3,
-    handles: true,
-    handleSides: "left-right",
+    handles: "sides",
     handleWidth: 60,
     handleHeight: 25,
     handleTopOffset: 10,
@@ -115,7 +111,7 @@ export const PRESETS: Preset[] = [
     pattern: "holes",
     patternSize: 6,
     patternSpacing: 3,
-    handles: false,
+    handles: "none",
   },
   {
     name: "Drawer Insert",
@@ -125,7 +121,7 @@ export const PRESETS: Preset[] = [
     wallThickness: 2,
     cornerRadius: 4,
     pattern: "none",
-    handles: false,
+    handles: "none",
   },
   {
     name: "Kitchen Drying Basket",
@@ -137,21 +133,10 @@ export const PRESETS: Preset[] = [
     pattern: "holes",
     patternSize: 6,
     patternSpacing: 3,
-    handles: true,
-    handleSides: "front-back",
+    handles: "ends",
     handleWidth: 70,
     handleHeight: 20,
     handleTopOffset: 10,
-  },
-  {
-    name: "Tall Storage Tube",
-    width: 80,
-    height: 200,
-    length: 80,
-    wallThickness: 2.5,
-    cornerRadius: 20,
-    pattern: "none",
-    handles: false,
   },
   {
     name: "Grid Organizer Bin",
@@ -163,14 +148,18 @@ export const PRESETS: Preset[] = [
     pattern: "hexagons",
     patternSize: 8,
     patternSpacing: 3,
-    handles: false,
+    handles: "none",
   },
-];
-
-export const HANDLE_SIDE_OPTIONS: { value: HandleSides; label: string }[] = [
-  { value: "front-back", label: "Front & Back" },
-  { value: "left-right", label: "Left & Right" },
-  { value: "all", label: "All Sides" },
+  {
+    name: "Spice Rack Bin",
+    width: 60,
+    height: 80,
+    length: 200,
+    wallThickness: 2,
+    cornerRadius: 8,
+    pattern: "none",
+    handles: "none",
+  },
 ];
 
 export const PALETTE = [
@@ -191,3 +180,5 @@ export const PALETTE = [
   "#1e3a5f",
   "#581c87",
 ];
+
+export const DEFAULT_BASKET_COLOR = PALETTE[0];

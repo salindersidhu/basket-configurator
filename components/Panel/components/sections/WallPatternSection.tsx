@@ -1,38 +1,44 @@
-import type { BasketConfig } from "@/lib/types";
+import { useShallow } from "zustand/react/shallow";
+
+import type { PatternType } from "@/lib/types";
+
+import { useBasketStore } from "@/stores/useBasketStore";
 
 import { PanelSection } from "../PanelSection";
 import { SegmentedControl } from "../SegmentedControl";
 import { SliderControl } from "../SliderControl";
 
-type Props = {
-  config: BasketConfig;
-  isImperial: boolean;
-  update: <K extends keyof BasketConfig>(
-    key: K,
-    value: BasketConfig[K],
-  ) => void;
-};
+export function WallPatternSection() {
+  const { pattern, patternSize, patternSpacing, isImperial, update } =
+    useBasketStore(
+      useShallow((s) => ({
+        pattern: s.config.pattern,
+        patternSize: s.config.patternSize,
+        patternSpacing: s.config.patternSpacing,
+        isImperial: s.isImperial,
+        update: s.update,
+      })),
+    );
 
-export function WallPatternSection({ config, isImperial, update }: Props) {
   return (
     <PanelSection title="Wall Pattern">
       <SegmentedControl
-        value={config.pattern}
+        value={pattern}
         options={[
           { value: "none", label: "Solid" },
           { value: "holes", label: "Circles" },
           { value: "hexagons", label: "Hexagons" },
         ]}
-        onChange={(val) => update("pattern", val as any)}
+        onChange={(val) => update("pattern", val as PatternType)}
       />
-      {config.pattern !== "none" && (
+      {pattern !== "none" && (
         <>
           <SliderControl
             min={3}
             max={20}
             step={0.5}
             label="Size"
-            value={config.patternSize}
+            value={patternSize}
             isImperial={isImperial}
             onChange={(v) => update("patternSize", v)}
           />
@@ -41,7 +47,7 @@ export function WallPatternSection({ config, isImperial, update }: Props) {
             max={10}
             step={0.5}
             label="Spacing"
-            value={config.patternSpacing}
+            value={patternSpacing}
             isImperial={isImperial}
             onChange={(v) => update("patternSpacing", v)}
           />
