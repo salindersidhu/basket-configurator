@@ -144,16 +144,6 @@ export const PRESETS: Preset[] = [
     handleTopOffset: 10,
   },
   {
-    name: "Tall Storage Tube",
-    width: 80,
-    height: 200,
-    length: 80,
-    wallThickness: 2.5,
-    cornerRadius: 20,
-    pattern: "none",
-    handles: false,
-  },
-  {
     name: "Grid Organizer Bin",
     width: 180,
     height: 100,
@@ -163,6 +153,16 @@ export const PRESETS: Preset[] = [
     pattern: "hexagons",
     patternSize: 8,
     patternSpacing: 3,
+    handles: false,
+  },
+  {
+    name: "Spice Rack Bin",
+    width: 60,
+    height: 80,
+    length: 200,
+    wallThickness: 2,
+    cornerRadius: 8,
+    pattern: "none",
     handles: false,
   },
 ];
