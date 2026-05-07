@@ -1,23 +1,20 @@
-import type { BasketConfig } from "@/lib/types";
+import { useBasketStore } from "@/stores/useBasketStore";
 
 import { PanelSection } from "../PanelSection";
 import { SegmentedControl } from "../SegmentedControl";
 import { SliderControl } from "../SliderControl";
 
-type Props = {
-  config: BasketConfig;
-  isImperial: boolean;
-  update: <K extends keyof BasketConfig>(
-    key: K,
-    value: BasketConfig[K],
-  ) => void;
-};
+export function WallPatternSection() {
+  const pattern = useBasketStore((s) => s.config.pattern);
+  const patternSize = useBasketStore((s) => s.config.patternSize);
+  const patternSpacing = useBasketStore((s) => s.config.patternSpacing);
+  const isImperial = useBasketStore((s) => s.isImperial);
+  const update = useBasketStore((s) => s.update);
 
-export function WallPatternSection({ config, isImperial, update }: Props) {
   return (
     <PanelSection title="Wall Pattern">
       <SegmentedControl
-        value={config.pattern}
+        value={pattern}
         options={[
           { value: "none", label: "Solid" },
           { value: "holes", label: "Circles" },
@@ -25,14 +22,14 @@ export function WallPatternSection({ config, isImperial, update }: Props) {
         ]}
         onChange={(val) => update("pattern", val as any)}
       />
-      {config.pattern !== "none" && (
+      {pattern !== "none" && (
         <>
           <SliderControl
             min={3}
             max={20}
             step={0.5}
             label="Size"
-            value={config.patternSize}
+            value={patternSize}
             isImperial={isImperial}
             onChange={(v) => update("patternSize", v)}
           />
@@ -41,7 +38,7 @@ export function WallPatternSection({ config, isImperial, update }: Props) {
             max={10}
             step={0.5}
             label="Spacing"
-            value={config.patternSpacing}
+            value={patternSpacing}
             isImperial={isImperial}
             onChange={(v) => update("patternSpacing", v)}
           />

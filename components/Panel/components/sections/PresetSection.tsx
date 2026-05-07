@@ -1,14 +1,14 @@
 import type { BasketConfig } from "@/lib/types";
 
+import { useBasketStore } from "@/stores/useBasketStore";
+
 import { PRESETS } from "../../constants";
 import { PanelSection } from "../PanelSection";
 
-type Props = {
-  config: BasketConfig;
-  updateAll: (next: BasketConfig) => void;
-};
+export function PresetSection() {
+  const config = useBasketStore((s) => s.config);
+  const updateAll = useBasketStore((s) => s.updateAll);
 
-export function PresetSection({ config, updateAll }: Props) {
   function setPreset(preset: (typeof PRESETS)[number]) {
     const next: BasketConfig = {
       ...config,

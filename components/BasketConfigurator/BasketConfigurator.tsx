@@ -1,9 +1,9 @@
 "use client";
 
-import type { BasketConfig } from "@/lib/types";
-
 import { useEffect, useState } from "react";
 import { FiInfo, FiMoon, FiSun } from "react-icons/fi";
+
+import { useBasketStore } from "@/stores/useBasketStore";
 
 import { AboutModal } from "./AboutModal";
 import { BasketCanvas } from "@/components/BasketCanvas";
@@ -12,28 +12,11 @@ import { Panel } from "@/components/Panel";
 import { useBasketGeometry } from "@/hooks/useBasketGeometry";
 import { ExportModal } from "./ExportModal";
 
-import { exportSTL } from "@/lib/exporters";
-
-const initialConfig: BasketConfig = {
-  width: 120,
-  height: 70,
-  length: 160,
-  wallThickness: 2.5,
-  cornerRadius: 0,
-  pattern: "none",
-  patternSize: 8,
-  patternSpacing: 3,
-  handles: true,
-  handleSides: "front-back",
-  handleWidth: 60,
-  handleHeight: 20,
-  handleTopOffset: 8,
-  color: "#b8b8b8",
-};
-
 export function BasketConfigurator() {
-  const [config, setConfig] = useState(initialConfig);
-  const [modelColor, setModelColor] = useState("#b8b8b8");
+  const config = useBasketStore((s) => s.config);
+  const color = useBasketStore((s) => s.config.color);
+  const exportBasket = useBasketStore((s) => s.exportBasket);
+
   const [isDark, setIsDark] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
@@ -47,22 +30,13 @@ export function BasketConfigurator() {
 
   const toggleTheme = () => setIsDark((d) => !d);
 
-  const handleExport = async (filename: string) => {
-    await exportSTL(config, filename);
-  };
-
   return (
     <div className="flex h-full min-h-0">
       <aside className="panel-width bg-panel border-r border-border overflow-y-auto flex flex-col shrink-0">
-        <Panel
-          config={config}
-          onChange={setConfig}
-          onColorChange={setModelColor}
-          onExport={() => setExportOpen(true)}
-        />
+        <Panel onExport={() => setExportOpen(true)} />
       </aside>
       <main className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-bg">
-        <BasketCanvas geometry={geometry} color={modelColor} isDark={isDark} />
+        <BasketCanvas geometry={geometry} color={color} isDark={isDark} />
         <LoadingOverlay busy={busy} isDark={isDark} />
         <div className="absolute top-3 right-3 z-10 flex gap-2">
           <button
@@ -88,7 +62,7 @@ export function BasketConfigurator() {
       <ExportModal
         open={exportOpen}
         onClose={() => setExportOpen(false)}
-        onExport={handleExport}
+        onExport={exportBasket}
       />
     </div>
   );

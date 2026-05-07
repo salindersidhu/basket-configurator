@@ -191,3 +191,5 @@ export const PALETTE = [
   "#1e3a5f",
   "#581c87",
 ];
+
+export const DEFAULT_BASKET_COLOR = PALETTE[0];

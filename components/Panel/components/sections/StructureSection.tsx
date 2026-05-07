@@ -1,18 +1,13 @@
-import type { BasketConfig } from "@/lib/types";
+import { useBasketStore } from "@/stores/useBasketStore";
 
 import { PanelSection } from "../PanelSection";
 import { SliderControl } from "../SliderControl";
 
-type Props = {
-  config: BasketConfig;
-  isImperial: boolean;
-  update: <K extends keyof BasketConfig>(
-    key: K,
-    value: BasketConfig[K],
-  ) => void;
-};
+export function StructureSection() {
+  const wallThickness = useBasketStore((s) => s.config.wallThickness);
+  const isImperial = useBasketStore((s) => s.isImperial);
+  const update = useBasketStore((s) => s.update);
 
-export function StructureSection({ config, isImperial, update }: Props) {
   return (
     <PanelSection title="Structure">
       <SliderControl
@@ -20,7 +15,7 @@ export function StructureSection({ config, isImperial, update }: Props) {
         max={8}
         step={0.5}
         label="Wall Thickness"
-        value={config.wallThickness}
+        value={wallThickness}
         isImperial={isImperial}
         onChange={(v) => update("wallThickness", v)}
       />

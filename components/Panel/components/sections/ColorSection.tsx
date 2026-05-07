@@ -1,23 +1,15 @@
-import type { BasketConfig } from "@/lib/types";
+import { useBasketStore } from "@/stores/useBasketStore";
 
 import { ColorPicker } from "../ColorPicker";
 import { PanelSection } from "../PanelSection";
 
-type Props = {
-  config: BasketConfig;
-  update: <K extends keyof BasketConfig>(
-    key: K,
-    value: BasketConfig[K],
-  ) => void;
-};
+export function ColorSection() {
+  const color = useBasketStore((s) => s.config.color);
+  const update = useBasketStore((s) => s.update);
 
-export function ColorSection({ config, update }: Props) {
   return (
     <PanelSection title="Colour">
-      <ColorPicker
-        color={config.color || "#b8b8b8"}
-        onChange={(hex) => update("color", hex)}
-      />
+      <ColorPicker color={color} onChange={(hex) => update("color", hex)} />
     </PanelSection>
   );
 }
