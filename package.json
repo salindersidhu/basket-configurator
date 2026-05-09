@@ -20,7 +20,6 @@
     "react-epic-spinners": "^0.6.0",
     "react-icons": "^5.6.0",
     "three": "^0.184.0",
-    "vaul": "^1.1.2",
     "zustand": "^5.0.13"
   },
   "devDependencies": {

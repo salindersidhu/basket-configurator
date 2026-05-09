@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { FiInfo, FiMoon, FiSun } from "react-icons/fi";
-import { Drawer } from "vaul";
 
 import { useBasketStore } from "@/stores/useBasketStore";
 import { useThemeStore } from "@/stores/useThemeStore";
@@ -32,12 +31,12 @@ export function BasketConfigurator() {
   }, [isDark]);
 
   return (
-    <div className="flex h-full min-h-0">
+    <div className="flex h-full min-h-0 flex-col md:flex-row">
       <aside className="panel-width hidden shrink-0 flex-col overflow-y-auto border-r border-border bg-panel md:flex">
         <Panel onExport={() => setExportOpen(true)} />
       </aside>
 
-      <main className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-bg pb-[60dvh] md:pb-0">
+      <main className="relative flex h-[40dvh] min-h-0 min-w-0 flex-none flex-col bg-bg md:h-auto md:flex-1">
         <BasketCanvas geometry={geometry} color={color} />
         <LoadingOverlay busy={busy} />
 
@@ -59,7 +58,7 @@ export function BasketConfigurator() {
           </button>
         </div>
 
-        <div className="pointer-events-none absolute bottom-[calc(60dvh+1rem)] left-1/2 z-10 -translate-x-1/2 whitespace-nowrap text-[11px] text-dim opacity-50 md:bottom-4">
+        <div className="pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap text-[11px] text-dim opacity-50">
           <span className="md:hidden">
             Swipe to rotate · Pinch to zoom · Pan with two fingers
           </span>
@@ -69,17 +68,9 @@ export function BasketConfigurator() {
         </div>
       </main>
 
-      <Drawer.Root open modal={false} dismissible={false}>
-        <Drawer.Portal>
-          <Drawer.Content className="fixed inset-x-0 bottom-0  h-[60dvh] rounded-t-2xl border-t border-border bg-panel outline-none md:hidden">
-            <Drawer.Title className="sr-only">Basket settings</Drawer.Title>
-
-            <div className="h-full">
-              <Panel onExport={() => setExportOpen(true)} />
-            </div>
-          </Drawer.Content>
-        </Drawer.Portal>
-      </Drawer.Root>
+      <section className="h-[60dvh] min-h-0 flex-none overflow-hidden rounded-t-2xl border-t border-border bg-panel md:hidden">
+        <Panel onExport={() => setExportOpen(true)} />
+      </section>
 
       <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
 
