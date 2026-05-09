@@ -9,11 +9,9 @@ import { CAMERA } from "./constants";
 export function BasketCanvas({
   geometry,
   color,
-  isDark,
 }: {
   geometry: THREE.BufferGeometry | null;
   color: string;
-  isDark: boolean;
 }) {
   return (
     <Canvas
@@ -28,7 +26,7 @@ export function BasketCanvas({
       }}
       dpr={[1, 2]}
     >
-      <Scene geometry={geometry} color={color} isDark={isDark} />
+      <Scene geometry={geometry} color={color} />
     </Canvas>
   );
 }

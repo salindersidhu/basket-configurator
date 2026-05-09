@@ -17,7 +17,7 @@ interface Props {
 export function Panel({ onExport }: Props) {
   return (
     <div className="flex flex-col h-full">
-      <div className="px-5 py-4 border-b border-border flex items-center gap-3">
+      <div className="hidden items-center gap-3 border-b border-border px-5 py-4 md:flex">
         <img src="/icon0.svg" className="w-6 h-6" />
         <div>
           <h1 className="text-base font-semibold tracking-tight">
@@ -37,11 +37,10 @@ export function Panel({ onExport }: Props) {
         <WallPatternSection />
         <HandleSection />
       </div>
-      <div className="px-5 py-4 border-t border-border">
+      <div className="sticky bottom-0 bg-panel px-5 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] border-t border-border">
         <button
           onClick={onExport}
-          className="w-full py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-all
-          bg-accent text-white hover:bg-accent-hover active:scale-[0.98]"
+          className="w-full py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-all bg-accent text-white hover:bg-accent-hover active:scale-[0.98]"
         >
           Export STL
         </button>

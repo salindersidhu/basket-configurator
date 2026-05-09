@@ -11,14 +11,18 @@ import { Lights } from "./Lights";
 import { Mesh } from "./Mesh";
 import { CAMERA, COLORS } from "../constants";
 
+import { useThemeStore } from "@/stores/useThemeStore";
+
 type Props = {
   geometry: THREE.BufferGeometry | null;
   color: string;
-  isDark: boolean;
 };
 
-export function Scene({ geometry, color, isDark }: Props) {
+export function Scene({ geometry, color }: Props) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
+
+  const isDark = useThemeStore((s) => s.isDark);
+
   return (
     <>
       <color
@@ -27,7 +31,7 @@ export function Scene({ geometry, color, isDark }: Props) {
       />
 
       <Lights />
-      <Grid isDark={isDark} />
+      <Grid />
 
       {geometry && <Mesh geometry={geometry} color={color} />}
 

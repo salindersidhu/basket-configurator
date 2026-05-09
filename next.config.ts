@@ -5,6 +5,8 @@ const hash = execSync("git rev-parse --short HEAD").toString().trim();
 const version = require("./package.json").version;
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["10.0.0.*"],
+
   transpilePackages: ["three-bvh-csg"],
 
   env: {
