@@ -2,13 +2,11 @@
 
 import { HollowDotsSpinner } from "react-epic-spinners";
 
-export function LoadingOverlay({
-  busy,
-  isDark,
-}: {
-  busy: boolean;
-  isDark: boolean;
-}) {
+import { useThemeStore } from "@/stores/useThemeStore";
+
+export function LoadingOverlay({ busy }: { busy: boolean }) {
+  const isDark = useThemeStore((s) => s.isDark);
+
   if (!busy) return null;
 
   return (

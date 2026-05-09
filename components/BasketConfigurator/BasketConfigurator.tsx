@@ -5,6 +5,7 @@ import { FiInfo, FiMoon, FiSun } from "react-icons/fi";
 import { Drawer } from "vaul";
 
 import { useBasketStore } from "@/stores/useBasketStore";
+import { useThemeStore } from "@/stores/useThemeStore";
 
 import { AboutModal } from "./AboutModal";
 import { BasketCanvas } from "@/components/BasketCanvas";
@@ -17,7 +18,9 @@ export function BasketConfigurator() {
   const color = useBasketStore((s) => s.config.color);
   const exportBasket = useBasketStore((s) => s.exportBasket);
 
-  const [isDark, setIsDark] = useState(true);
+  const isDark = useThemeStore((s) => s.isDark);
+  const toggleTheme = useThemeStore((s) => s.toggleTheme);
+
   const [aboutOpen, setAboutOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
 
@@ -28,8 +31,6 @@ export function BasketConfigurator() {
     return () => document.body.classList.remove("light");
   }, [isDark]);
 
-  const toggleTheme = () => setIsDark((d) => !d);
-
   return (
     <div className="flex h-full min-h-0">
       <aside className="panel-width hidden shrink-0 flex-col overflow-y-auto border-r border-border bg-panel md:flex">
@@ -37,8 +38,8 @@ export function BasketConfigurator() {
       </aside>
 
       <main className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-bg pb-[60dvh] md:pb-0">
-        <BasketCanvas geometry={geometry} color={color} isDark={isDark} />
-        <LoadingOverlay busy={busy} isDark={isDark} />
+        <BasketCanvas geometry={geometry} color={color} />
+        <LoadingOverlay busy={busy} />
 
         <div className="absolute right-3 top-3 z-10 flex gap-2">
           <button
@@ -59,7 +60,9 @@ export function BasketConfigurator() {
         </div>
 
         <div className="pointer-events-none absolute bottom-[calc(60dvh+1rem)] left-1/2 z-10 -translate-x-1/2 whitespace-nowrap text-[11px] text-dim opacity-50 md:bottom-4">
-          <span className="md:hidden">Drag to rotate · Pinch to zoom</span>
+          <span className="md:hidden">
+            Swipe to rotate · Pinch to zoom · Pan with two fingers
+          </span>
           <span className="hidden md:inline">
             Drag to rotate · Scroll to zoom · Right-click to pan
           </span>
